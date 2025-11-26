@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacy Inventory - Notifications</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="static/css/sidebar_design.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        :root {
+            --primary-color: #DA6363;
+            --primary-dark: #c04a4a;
+            --urgent-color: #e74c3c;
+            --high-color: #e67e22;
+            --medium-color: #f39c12;
+            --low-color: #3498db;
+            --bg-color: #f5f7fa;
+            --text-color: #000;
+            --sidebar-bg: linear-gradient(to bottom, #DA6363, #c04a4a);
+            --card-bg: #ffffff;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            margin-left: 250px;
+            overflow-y: auto;
+            color: var(--text-color);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .header h1 {
+            color: var(--text-color);
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .notification-icon {
+            position: relative;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--text-color);
+            padding: 8px;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+        .notification-icon:hover {
+            background-color: #f1f3f4;
+        }
+        .notification-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 350px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            display: none;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .notification-dropdown.active {
+            display: block;
+        }
+        .notification-header {
+            padding: 15px;
+            border-bottom: 1px solid #eaeaea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .notification-header h3 {
+            margin: 0;
+            color: var(--text-color);
+        }
+        .notification-list {
+            list-style: none;
+        }
+        .notification-item {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .notification-item:hover {
+            background-color: #f8f9fa;
+        }
+        .notification-item.unread {
+            background-color: #f0f7ff;
+            border-left: 3px solid var(--primary-color);
+        }
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .notification-message {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        .notification-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #999;
+        }
+        .notification-priority {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .priority-urgent { background-color: var(--urgent-color); color: white; }
+        .priority-high { background-color: var(--high-color); color: white; }
+        .priority-medium { background-color: var(--medium-color); color: white; }
+        .priority-low { background-color: var(--low-color); color: white; }
+        .notification-type {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        .btn-secondary {
+            background-color: #f1f3f4;
+            color: var(--text-color);
+        }
+        .btn-secondary:hover {
+            background-color: #e8eaed;
+        }
+        /* Notification Page Styles */
+        .notification-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .filter-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .notification-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #ddd;
+        }
+        .notification-card.urgent { border-left-color: var(--urgent-color); }
+        .notification-card.high { border-left-color: var(--high-color); }
+        .notification-card.medium { border-left-color: var(--medium-color); }
+        .notification-card.low { border-left-color: var(--low-color); }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        .card-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+        .action-btn:hover {
+            color: var(--primary-color);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #ddd;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <img src="static/images/logo.png" alt="logo" class="logo">
+        <h2>MediCare | Admin</h2>
+        <p>Inventory System</p>
+      </div>
+
+      <nav>
+        <ul>
+          <li><a href="{{ url_for('admin_account') }}">Dashboard</a></li>
+          <li><a href="{{ url_for('medicine_tab') }}">Medicine</a></li>
+          <li class="active"><a href="/Notif Tab">Notification</a></li>
+          <li><a href="#">Staff</a></li>
+          <li><a href="/History Tab">History</a></li>
+          <li><a href="/Trash Tab">Trash</a></li>
+          <li><a href="{{ url_for('generate_invite') }}">Generate Invite Code</a></li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button onclick="return confirm('Are you sure you want to log out?')"><a href="/logout">Log out</a></button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1>Notifications</h1>
+            <div class="header-actions">
+                <div class="notification-icon" id="notificationIcon">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="headerNotificationCount">5</span>
+                    <div class="notification-dropdown" id="notificationDropdown">
+                        <div class="notification-header">
+                            <h3>Recent Notifications</h3>
+                            <button class="btn btn-secondary btn-sm" onclick="markAllAsRead()">Mark All Read</button>
+                        </div>
+                        <ul class="notification-list" id="notificationDropdownList"></ul>
+                        <div class="notification-header">
+                            <a href="#" style="color: var(--primary-color); text-decoration: none;">View All Notifications</a>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-secondary"><i class="fas fa-cog"></i> Settings</button>
+                <button class="btn btn-secondary"><i class="fas fa-sign-out-alt"></i> Log out</button>
+            </div>
+        </div>
+        <div class="notification-filters">
+            <button class="filter-btn active" onclick="filterNotifications('all', event)">All</button>
+            <button class="filter-btn" onclick="filterNotifications('unread', event)">Unread</button>
+            <button class="filter-btn" onclick="filterNotifications('LOW_STOCK', event)">Low Stock</button>
+            <button class="filter-btn" onclick="filterNotifications('EXPIRY_ALERT', event)">Expiry Alerts</button>
+            <button class="filter-btn" onclick="filterNotifications('ORDER_UPDATE', event)">Orders</button>
+            <button class="filter-btn" onclick="filterNotifications('SYSTEM_ALERT', event)">System</button>
+            <button class="filter-btn" onclick="filterNotifications('archived', event)">Archived</button>
+        </div>
+        <div id="notificationsContainer"></div>
+    </div>
+</div>
+
+<script>
+const notifications = [
+    {id:1,title:'Low Stock Alert',message:'Paracetamol Syrup is below minimum stock level (Current: 8, Minimum: 10)',type:'LOW_STOCK',priority:'HIGH',priorityClass:'high',isRead:false,createdAt:'2024-01-15 10:30:00',relatedEntity:'PRODUCT',relatedId:1,actionUrl:'/inventory/product/1'},
+    {id:2,title:'Expiry Date Approaching',message:'Medical Gloves (Batch #GLV-2024-01) expires in 30 days',type:'EXPIRY_ALERT',priority:'MEDIUM',priorityClass:'medium',isRead:false,createdAt:'2024-01-15 09:15:00',relatedEntity:'PRODUCT',relatedId:3,actionUrl:'/inventory/product/3'},
+    {id:3,title:'Order #ORD001 Completed',message:'Your order has been processed and is ready for pickup',type:'ORDER_UPDATE',priority:'LOW',priorityClass:'low',isRead:true,createdAt:'2024-01-14 16:45:00',relatedEntity:'ORDER',relatedId:1,actionUrl:'/orders/1'},
+    {id:4,title:'System Maintenance',message:'Scheduled maintenance this Saturday 2-4 AM. System may be unavailable.',type:'SYSTEM_ALERT',priority:'MEDIUM',priorityClass:'medium',isRead:false,createdAt:'2024-01-14 14:20:00',relatedEntity:'SYSTEM',relatedId:null,actionUrl:'/settings'},
+    {id:5,title:'Critical Stock Level',message:'Bandages are critically low (Current: 5, Minimum: 25)',type:'LOW_STOCK',priority:'URGENT',priorityClass:'urgent',isRead:false,createdAt:'2024-01-14 11:05:00',relatedEntity:'PRODUCT',relatedId:4,actionUrl:'/inventory/product/4'}
+];
+
+document.addEventListener('DOMContentLoaded', function() {
+    updateNotificationBadges();
+    renderNotifications('all');
+    setupNotificationDropdown();
+});
+
+function updateNotificationBadges() {
+    const unreadCount = notifications.filter(n => !n.isRead).length;
+    document.getElementById('sidebarNotificationCount').textContent = unreadCount;
+    const headerBadge = document.getElementById('headerNotificationCount');
+    headerBadge.textContent = unreadCount;
+    headerBadge.style.display = unreadCount === 0 ? 'none' : 'inline';
+}
+
+function setupNotificationDropdown() {
+    const notificationIcon = document.getElementById('notificationIcon');
+    const dropdown = document.getElementById('notificationDropdown');
+    notificationIcon.addEventListener('click', function(e){
+        e.stopPropagation();
+        dropdown.classList.toggle('active');
+        renderNotificationDropdown();
+    });
+    document.addEventListener('click', function(){
+        dropdown.classList.remove('active');
+    });
+}
+
+function renderNotificationDropdown() {
+    const container = document.getElementById('notificationDropdownList');
+    const recentNotifications = notifications.slice(0,5);
+    container.innerHTML = '';
+    if(recentNotifications.length===0){
+        container.innerHTML='<div class="notification-item"><div class="notification-message">No new notifications</div></div>';
+        return;
+    }
+    recentNotifications.forEach(n=>{
+        const item = document.createElement('li');
+        item.className = 'notification-item' + (n.isRead ? '' : ' unread');
+        item.innerHTML = `
+            <div class="notification-title">
+                <span>${n.title}</span>
+                <span class="notification-priority priority-${n.priorityClass}">${n.priority}</span>
+            </div>
+            <div class="notification-message">${n.message}</div>
+            <div class="notification-meta">
+                <span class="notification-type">${n.type.replace('_',' ')}</span>
+                <span>${formatTime(n.createdAt)}</span>
+            </div>
+        `;
+        item.addEventListener('click', function(){
+            markAsRead(n.id);
+            alert('Navigating to: '+n.actionUrl);
+        });
+        container.appendChild(item);
+    });
+}
+
+function renderNotifications(filter) {
+    const container = document.getElementById('notificationsContainer');
+    let filtered = [...notifications];
+    if(filter==='unread') filtered = filtered.filter(n=>!n.isRead);
+    else if(filter==='archived') filtered = [];
+    else if(filter!=='all') filtered = filtered.filter(n=>n.type===filter);
+    const priorityOrder = {URGENT:1,HIGH:2,MEDIUM:3,LOW:4};
+    filtered.sort((a,b)=>priorityOrder[a.priority]-priorityOrder[b.priority] || new Date(b.createdAt)-new Date(a.createdAt));
+    container.innerHTML='';
+    if(filtered.length===0){
+        container.innerHTML=`
+            <div class="empty-state">
+                <i class="fas fa-bell-slash"></i>
+                <h3>No notifications found</h3>
+                <p>You're all caught up! There are no ${filter==='all'?'':filter+' '}notifications to display.</p>
+            </div>
+        `;
+        return;
+    }
+    filtered.forEach(n=>{
+        const card = document.createElement('div');
+        card.className = 'notification-card '+n.priorityClass;
+        card.innerHTML = `
+            <div class="card-header">
+                <div>
+                    <div style="font-weight:600;margin-bottom:5px;">${n.title}</div>
+                    <div style="color:#666;font-size:14px;margin-bottom:8px;">${n.message}</div>
+                    <div style="display:flex;gap:10px;font-size:12px;color:#999;">
+                        <span class="notification-type">${n.type.replace('_',' ')}</span>
+                        <span>${formatTime(n.createdAt)}</span>
+                        <span class="notification-priority priority-${n.priorityClass}">${n.priority}</span>
+                    </div>
+                </div>
+                <div class="card-actions">
+                    ${n.isRead?'<button class="action-btn" onclick="markAsUnread('+n.id+')"><i class="fas fa-envelope"></i></button>':'<button class="action-btn" onclick="markAsRead('+n.id+')"><i class="fas fa-envelope-open"></i></button>'}
+                    <button class="action-btn" onclick="archiveNotification(${n.id})"><i class="fas fa-archive"></i></button>
+                    <button class="action-btn" onclick="deleteNotification(${n.id})"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+        `;
+        card.addEventListener('click', function(e){
+            if(!e.target.closest('.card-actions')){
+                markAsRead(n.id);
+                alert('Navigating to: '+n.actionUrl);
+            }
+        });
+        container.appendChild(card);
+    });
+}
+
+function filterNotifications(filter,event){
+    document.querySelectorAll('.filter-btn').forEach(btn=>btn.classList.remove('active'));
+    if(event) event.target.classList.add('active');
+    renderNotifications(filter);
+}
+
+function markAsRead(id){
+    const n = notifications.find(n=>n.id===id);
+    if(n && !n.isRead){ n.isRead=true; updateNotificationBadges(); renderNotifications(document.querySelector('.filter-btn.active').textContent); renderNotificationDropdown(); console.log('Marked notification '+id+' as read'); }
+}
+function markAsUnread(id){
+    const n = notifications.find(n=>n.id===id);
+    if(n && n.isRead){ n.isRead=false; updateNotificationBadges(); renderNotifications(document.querySelector('.filter-btn.active').textContent); renderNotificationDropdown(); console.log('Marked notification '+id+' as unread'); }
+}
+function markAllAsRead(){
+    notifications.forEach(n=>n.isRead=true);
+    updateNotificationBadges();
+    renderNotifications(document.querySelector('.filter-btn.active').textContent);
+    renderNotificationDropdown();
+    console.log('Marked all notifications as read');
+}
+function archiveNotification(id){
+    const idx = notifications.findIndex(n=>n.id===id);
+    if(idx!==-1){ notifications.splice(idx,1); updateNotificationBadges(); renderNotifications(document.querySelector('.filter-btn.active').textContent); renderNotificationDropdown(); console.log('Archived notification '+id); }
+}
+function deleteNotification(id){
+    if(confirm('Are you sure you want to delete this notification?')){
+        const idx = notifications.findIndex(n=>n.id===id);
+        if(idx!==-1){ notifications.splice(idx,1); updateNotificationBadges(); renderNotifications(document.querySelector('.filter-btn.active').textContent); renderNotificationDropdown(); console.log('Deleted notification '+id); }
+    }
+}
+
+function formatTime(dateStr){
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs/60000);
+    const diffHours = Math.floor(diffMs/3600000);
+    const diffDays = Math.floor(diffMs/86400000);
+    if(diffMins<1) return 'Just now';
+    if(diffMins<60) return diffMins+' min ago';
+    if(diffHours<24) return diffHours+' hour'+(diffHours>1?'s':'')+' ago';
+    if(diffDays<7) return diffDays+' day'+(diffDays>1?'s':'')+' ago';
+    return date.toLocaleDateString();
+}
+</script>
+</body>
+</html>

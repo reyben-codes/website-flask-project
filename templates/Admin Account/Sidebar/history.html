@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare Inventory | History</title>
+    <link rel="stylesheet" href="static/css/sidebar_design.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        :root {
+            --primary-color: #DA6363;
+            --primary-dark: #c04a4a;
+            --urgent-color: #e74c3c;
+            --high-color: #e67e22;
+            --medium-color: #f39c12;
+            --low-color: #3498db;
+            --bg-color: #f5f7fa;
+            --text-color: #000;
+            --sidebar-bg: linear-gradient(to bottom, #DA6363, #c04a4a);
+            --card-bg: #ffffff;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            color: var(--text-color);
+            margin-left: 250px
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .header h1 {
+            color: var(--text-color);
+            font-size: 28px;
+            font-weight: 600;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .notification-icon {
+            position: relative;
+            cursor: pointer;
+            font-size: 20px;
+            color: var(--text-color);
+            padding: 8px;
+            border-radius: 50%;
+            transition: background-color 0.3s;
+        }
+        
+        .notification-icon:hover {
+            background-color: #f1f3f4;
+        }
+        
+        .notification-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 350px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            display: none;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .notification-dropdown.active {
+            display: block;
+        }
+        
+        .notification-header {
+            padding: 15px;
+            border-bottom: 1px solid #eaeaea;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+        
+        .notification-header h3 {
+            margin: 0;
+            color: var(--text-color);
+        }
+        
+        .notification-list {
+            list-style: none;
+        }
+        
+        .notification-item {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .notification-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .notification-item.unread {
+            background-color: #f0f7ff;
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .notification-message {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .notification-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #999;
+        }
+        
+        .notification-priority {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .priority-urgent { background-color: var(--urgent-color); color: white; }
+        .priority-high { background-color: var(--high-color); color: white; }
+        .priority-medium { background-color: var(--medium-color); color: white; }
+        .priority-low { background-color: var(--low-color); color: white; }
+        
+        .notification-type {
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-secondary {
+            background-color: #f1f3f4;
+            color: var(--text-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e8eaed;
+        }
+        
+        /* History Page Styles */
+        .history-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .filter-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .filter-count {
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            padding: 2px 8px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .history-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #ddd;
+        }
+        
+        .history-card.approved { border-left-color: #2ecc71; }
+        .history-card.rejected { border-left-color: #e74c3c; }
+        .history-card.alert { border-left-color: #f39c12; }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        
+        .card-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+        
+        .action-btn:hover {
+            color: var(--primary-color);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+        
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #ddd;
+        }
+        
+        .mark-all-read {
+            text-align: center;
+            margin-top: 0px;
+            translate: 300px
+        }
+        
+        .mark-all-read-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .mark-all-read-btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .divider {
+            height: 1px;
+            background-color: #ecf0f1;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+      <div class="sidebar-header">
+        <img src="static/images/logo.png" alt="logo" class="logo">
+        <h2>MediCare | Admin</h2>
+        <p>Inventory System</p>
+      </div>
+
+      <nav>
+        <ul>
+          <li><a href="{{ url_for('admin_account') }}">Dashboard</a></li>
+          <li><a href="{{ url_for('medicine_tab') }}">Medicine</a></li>
+          <li><a href="/Notif Tab">Notification</a></li>
+          <li><a href="#">Staff</a></li>
+          <li class="active"><a href="/History Tab">History</a></li>
+          <li><a href="/Trash Tab">Trash</a></li>
+          <li><a href="{{ url_for('generate_invite') }}">Generate Invite Code</a></li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button onclick="return confirm('Are you sure you want to log out?')"><a href="/logout">Log out</a></button>
+      </div>
+    </aside>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1>History</h1>
+            </div>
+            
+            <!-- History Filters -->
+            <div class="history-filters">
+                <button class="filter-btn active" onclick="filterHistory('all')">
+                    <span>Today</span>
+                    <span class="filter-count">7</span>
+                </button>
+                <button class="filter-btn" onclick="filterHistory('view-all')">
+                    <span>View All</span>
+                    <span class="filter-count">12</span>
+                </button>
+                <button class="filter-btn" onclick="filterHistory('approved')">
+                    <span>Approved</span>
+                    <span class="filter-count">5</span>
+                </button>
+                <button class="filter-btn" onclick="filterHistory('rejected')">
+                    <span>Rejected</span>
+                    <span class="filter-count">1</span>
+                </button>
+                <button class="filter-btn" onclick="filterHistory('view-alerts')">
+                    <span>View Alerts</span>
+                    <span class="filter-count">1</span>
+                </button>
+
+                <div class="mark-all-read">
+                <button class="mark-all-read-btn" onclick="markAllAsRead()">Mark all as read</button>
+            </div>
+            </div>
+            
+            <!-- History List -->
+            <div id="historyContainer">
+                <!-- History items will be populated by JavaScript -->
+            </div>
+            
+        </div>
+    </div>
+
+    <script>
+        // Sample history data
+        const historyItems = [
+            {
+                id: 1,
+                email: "hello123@gmail.com",
+                action: "approved",
+                time: "23 sec",
+                isRead: false,
+                type: "approved"
+            },
+            {
+                id: 2,
+                email: "Airis.DonnaGon@gmail.com",
+                action: "approved",
+                time: "1 min ago",
+                isRead: false,
+                type: "approved"
+            },
+            {
+                id: 3,
+                email: "gabriela.handsup@gmail.com",
+                action: "approved",
+                time: "3 min ago",
+                isRead: false,
+                type: "approved"
+            },
+            {
+                id: 4,
+                email: "jillian.joy@gmail.com",
+                action: "approved",
+                time: "5 min ago",
+                isRead: true,
+                type: "approved"
+            },
+            {
+                id: 5,
+                email: "user071521@gmail.com",
+                action: "approved",
+                time: "1 hour ago",
+                isRead: true,
+                type: "approved"
+            },
+            {
+                id: 6,
+                email: "userhvanrTV@gmail.com",
+                action: "rejected",
+                time: "2 hours ago",
+                isRead: false,
+                type: "rejected"
+            },
+            {
+                id: 7,
+                message: "Your Salbutamol is low on stock.",
+                time: "2 hours ago",
+                isRead: false,
+                type: "alert"
+            }
+        ];
+
+        // Initialize the history system
+        document.addEventListener('DOMContentLoaded', function() {
+            renderHistory('all');
+        });
+
+        // Render main history list
+        function renderHistory(filter) {
+            const container = document.getElementById('historyContainer');
+            let filteredHistory = [...historyItems];
+            
+            // Apply filters
+            if (filter === 'approved') {
+                filteredHistory = filteredHistory.filter(item => item.type === 'approved');
+            } else if (filter === 'rejected') {
+                filteredHistory = filteredHistory.filter(item => item.type === 'rejected');
+            } else if (filter === 'view-alerts') {
+                filteredHistory = filteredHistory.filter(item => item.type === 'alert');
+            } else if (filter === 'view-all') {
+                // Show all items (no filter)
+            } else if (filter === 'today') {
+                // In a real app, this would filter to today's items
+                // For demo, we'll show all
+            }
+            
+            container.innerHTML = '';
+            
+            if (filteredHistory.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-history"></i>
+                        <h3>No history found</h3>
+                        <p>There are no ${filter === 'all' ? '' : filter + ' '}history items to display.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            filteredHistory.forEach(item => {
+                const card = document.createElement('div');
+                card.className = `history-card ${item.type}`;
+                
+                let content = '';
+                if (item.type === 'alert') {
+                    content = `
+                        <div class="card-header">
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 5px;">${item.message}</div>
+                                <div style="color: #666; font-size: 14px; margin-bottom: 8px;">Alert notification</div>
+                                <div style="font-size: 12px; color: #999;">${item.time}</div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    content = `
+                        <div class="card-header">
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 5px;"><strong>${item.email}</strong> was ${item.action}.</div>
+                                <div style="color: #666; font-size: 14px; margin-bottom: 8px;">User account ${item.action}</div>
+                                <div style="font-size: 12px; color: #999;">${item.time}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                card.innerHTML = content;
+                
+                // Add divider between items
+                if (item.id !== filteredHistory[filteredHistory.length - 1].id) {
+                    const divider = document.createElement('div');
+                    divider.className = 'divider';
+                    container.appendChild(card);
+                    container.appendChild(divider);
+                } else {
+                    container.appendChild(card);
+                }
+            });
+        }
+
+        // Filter history
+        function filterHistory(filter) {
+            // Update active filter button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            renderHistory(filter);
+        }
+
+        // Mark all as read
+        function markAllAsRead() {
+            historyItems.forEach(item => {
+                item.isRead = true;
+            });
+            renderHistory(document.querySelector('.filter-btn.active').textContent.trim().toLowerCase());
+            
+            // In a real app, you would make an API call to update the database
+            console.log('Marked all history items as read');
+        }
+    </script>
+</body>
+</html>

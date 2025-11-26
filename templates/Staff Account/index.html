@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediCare | Staff Dashboard</title>
+  <link rel="stylesheet" href="static/css/staff_dashboard.css">
+  <link rel="icon" type="image/png" href="static/images/favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- html5-qrcode library -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.7/html5-qrcode.min.js"></script>
+
+  <style>
+    /* Make sure camera scanner fits inside the scan-box */
+    #reader {
+      width: 100%;
+      max-width: 350px;
+      margin-top: 10px;
+    }
+    .scan-box button {
+      margin-top: 10px;
+      padding: 8px 15px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+  </style>
+
+</head>
+<body>
+  <div class="dashboard-container">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>MediCare Staff Dashboard</h2>
+        <p>Inventory System</p>
+      </div>
+
+      <nav>
+        <ul>
+          <li class="active"><a href="#">Dashboard</a></li>
+          <li><a href="#">Inventory</a></li>
+          <li><a href="#">Message</a></li>
+          <li><a href="#">Notification</a></li>
+          <li><a href="#">Calendar</a></li>
+          <li><a href="#">History</a></li>
+          <li><a href="#">Trash</a></li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button><a href="/logout">Log out</a></button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="topbar">
+        <h1>Dashboard</h1>
+        <div class="topbar-icons">
+          <span>🔍 Search</span>
+          <span>🔔 Notifications</span>
+          <span>👤 Jillian Leonardo</span>
+        </div>
+      </header>
+
+      <div class="dashboard-grid">
+        <!-- Scan Box -->
+        <div class="card">
+          <h2>Scan with Camera</h2>
+          <div class="scan-box">
+            <p>Position barcode or QR code in front of camera to scan</p>
+
+            <!-- CAMERA READER GOES HERE -->
+            <div id="reader"></div>
+
+            <button id="startCameraBtn">Start Camera</button>
+            <button id="stopCameraBtn">Stop Camera</button>
+          </div>
+        </div>
+
+        <!-- Add Item -->
+        <form method="POST" action="/add_item">
+        <div class="card">
+          <h2>Add Item to Order</h2>
+
+          <div class="input-group">
+            <label>Item Name</label>
+            <input required name="ItemName" type="text" placeholder="Enter item name">
+          </div>
+
+          <div class="input-group">
+            <label>Quantity</label>
+            <input required name="Quantity" type="number" placeholder="Enter quantity">
+          </div>
+
+          <div class="input-group">
+            <label>RFID</label>
+            <input required name="RFIDNUM" type="text" placeholder="Enter RFID manually">
+          </div>
+
+          <div class="input-group">
+            <label>Option</label>
+            <select required name="Selections">
+              <option disabled selected>Select an option</option>
+              <option value="Essential Medication">Essential Medication</option>
+              <option value="Personal Protection">Personal Protection</option>
+              <option value="First Aid Tool">First Aid Tool</option>
+              <option value="Wound Care Items">Wound Care Items</option>
+              <option value="Diagnostic Tools">Diagnostic Tools</option>
+              <option value="Others">Others</option>
+            </select>
+          </div>
+
+          <button type="Submit" class="add-btn" id="addItemBtn">Add Item</button>
+        </div>
+        </form>
+      </div>
+
+      <!-- Order Table -->
+      <div class="order-table-card">
+        <h2>Order Items</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Quantity</th>
+              <th>RFID</th>
+              <th>Date Modified</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="orderTable"></tbody>
+        </table>
+
+        <button class="print-btn" id="printBtn">🖨️ Print Order Form</button>
+      </div>
+
+    </main>
+  </div>
+
+<script>
+// ---------------------------------------------
+// Add items manually
+// ---------------------------------------------
+const orderTable = document.getElementById("orderTable");
+const nameInput = document.getElementById("itemName");
+const qtyInput = document.getElementById("quantity");
+const rfidInput = document.getElementById("rfid");
+const optionInput = document.getElementById("option");
+
+// Add item button
+document.getElementById("addItemBtn").addEventListener("click", function () {
+    const name = nameInput.value;
+    const qty = qtyInput.value;
+    const rfid = rfidInput.value;
+    const option = optionInput.value;
+
+    if (!name || !qty || !rfid || !option) {
+        alert("Please fill in all fields");
+        return;
+    }
+
+    addToTable(`${name} (${option})`, qty, rfid);
+    clearForm();
+});
+
+// Clear input fields after adding
+function clearForm() {
+    nameInput.value = "";
+    qtyInput.value = "";
+    rfidInput.value = "";
+    optionInput.value = "";
+}
+
+// Add row to table
+function addToTable(product, qty, rfid) {
+    const now = new Date().toLocaleString();
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+        <td>${product}</td>
+        <td>${qty} pcs</td>
+        <td>${rfid}</td>
+        <td>${now}</td>
+        <td>
+            <button class="editRow">✏️</button>
+            <button class="deleteRow">🗑️</button>
+        </td>
+    `;
+
+    orderTable.appendChild(row);
+
+    // Apply event listeners
+    row.querySelector(".editRow").addEventListener("click", () => editRow(row));
+    row.querySelector(".deleteRow").addEventListener("click", () => row.remove());
+}
+
+// Edit Row
+function editRow(row) {
+    const cells = row.querySelectorAll("td");
+
+    const product = cells[0].innerText;
+    const qty = cells[1].innerText.replace(" pcs", "");
+    const rfid = cells[2].innerText;
+
+    const nameOnly = product.split(" (")[0];
+    const optionOnly = product.split("(")[1].replace(")", "");
+
+    // Put values back to input fields
+    nameInput.value = nameOnly;
+    qtyInput.value = qty;
+    rfidInput.value = rfid;
+    optionInput.value = optionOnly;
+
+    // Remove row so user can re-add the corrected one
+    row.remove();
+}
+
+// ---------------------------------------------
+// Camera Scanner
+// ---------------------------------------------
+const html5QrCode = new Html5Qrcode("reader");
+
+document.getElementById("startCameraBtn").addEventListener("click", function () {
+    Html5Qrcode.getCameras().then(cameras => {
+        if (cameras.length) {
+            html5QrCode.start(
+                { facingMode: "environment" },
+                { fps: 30, qrbox: 200 },
+                (message) => {
+                    alert("Scanned RFID: " + message);
+                    addToTable("Scanned Item", 1, message);
+                    html5QrCode.stop();
+                }
+            );
+        }
+    });
+});
+
+document.getElementById("stopCameraBtn").addEventListener("click", function () {
+    html5QrCode.stop().catch(err => console.log(err));
+});
+
+
+// Print Order
+document.getElementById("printBtn").addEventListener("click", function () {
+    if (orderTable.children.length === 0) {
+        alert("No items to print.");
+        return;
+    }
+
+    // Clone the table
+    let cloneTable = orderTable.parentElement.cloneNode(true);
+
+    // Remove the last column header (Actions)
+    cloneTable.querySelector("thead tr th:last-child").remove();
+
+    // Remove the action buttons column in every row
+    cloneTable.querySelectorAll("tbody tr").forEach(tr => {
+        tr.querySelector("td:last-child").remove();
+    });
+
+    // Create print window
+    let newWindow = window.open("", "Print", "width=800,height=600");
+
+    newWindow.document.write(`
+        <html>
+        <head>
+            <title>Order Form</title>
+            <style>
+                body { font-family: Arial, sans-serif; padding: 20px; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+                h2 { margin-bottom: 10px; }
+            </style>
+        </head>
+        <body>
+            <h2>Order Form</h2>
+            ${cloneTable.outerHTML}
+        </body>
+        </html>
+    `);
+
+    newWindow.document.close();
+    newWindow.print();
+    newWindow.close();
+});
+
+</script>
+
+</body>
+</html>

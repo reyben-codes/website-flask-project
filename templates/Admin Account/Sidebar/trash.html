@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PharmaStock - Trash</title>
+    <link rel="stylesheet" href="static/css/sidebar_design.css">
+    <link rel="stylesheet" href="static/css/trash.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+<body>
+
+<div class="container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <img src="static/images/logo.png" alt="logo" class="logo">
+        <h2>MediCare | Admin</h2>
+        <p>Inventory System</p>
+      </div>
+
+      <nav>
+        <ul>
+          <li><a href="{{ url_for('admin_account') }}">Dashboard</a></li>
+          <li><a href="{{ url_for('medicine_tab') }}">Medicine</a></li>
+          <li><a href="/Notif Tab">Notification</a></li>
+          <li><a href="#">Staff</a></li>
+          <li><a href="/History Tab">History</a></li>
+          <li class="active"><a href="/Trash Tab">Trash</a></li>
+          <li><a href="{{ url_for('generate_invite') }}">Generate Invite Code</a></li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button onclick="return confirm('Are you sure you want to log out?')"><a href="/logout">Log out</a></button>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+
+        <div class="header">
+            <h1>Trash</h1>
+
+            <div class="top-icons">
+                <i class="fas fa-search" id="search-icon"></i>
+                <i class="fas fa-bell"></i>
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </div>
+
+        <!-- TRASH CONTROLS -->
+        <div class="trash-controls">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="search-input" placeholder="Search in trash...">
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-outline" id="select-all">
+                    <i class="fas fa-check-square"></i> Select All
+                </button>
+                <button class="btn btn-primary" id="restore-selected">
+                    <i class="fas fa-undo"></i> Restore Selected
+                </button>
+                <button class="btn btn-danger" id="delete-selected">
+                    <i class="fas fa-trash"></i> Delete Permanently
+                </button>
+                <button class="btn btn-outline" id="empty-trash">
+                    <i class="fas fa-broom"></i> Empty Trash
+                </button>
+            </div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-container" id="table-container">
+
+            <div class="table-header">
+                <div>Name</div>
+                <div>Date Deleted</div>
+                <div>Size</div>
+                <div>Item Type</div>
+                <div>Date Modified</div>
+                <div></div>
+            </div>
+
+            <!-- ROWS (Sample) -->
+            <div class="trash-row" data-id="1">
+                <div class="trash-icon">
+                    <div class="checkbox-container">
+                        <div class="checkbox"></div>
+                    </div>
+                    <div class="file-icon pdf">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <span>Deleted_Report.pdf</span>
+                </div>
+                <div>7/12/2025 3:20 PM</div>
+                <div>5KB</div>
+                <div>PDF File</div>
+                <div>6/10/2025 10:18 AM</div>
+                <div class="dots">
+                    <i class="fas fa-ellipsis-v"></i>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-item restore" data-id="1">
+                            <i class="fas fa-undo"></i> Restore
+                        </div>
+                        <div class="dropdown-item delete" data-id="1">
+                            <i class="fas fa-trash"></i> Delete Permanently
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="trash-row" data-id="2">
+                <div class="trash-icon">
+                    <div class="checkbox-container">
+                        <div class="checkbox"></div>
+                    </div>
+                    <div class="file-icon csv">
+                        <i class="fas fa-file-csv"></i>
+                    </div>
+                    <span>Inventory_Logs.csv</span>
+                </div>
+                <div>7/11/2025 9:10 PM</div>
+                <div>12KB</div>
+                <div>CSV File</div>
+                <div>6/18/2025 2:05 PM</div>
+                <div class="dots">
+                    <i class="fas fa-ellipsis-v"></i>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-item restore" data-id="2">
+                            <i class="fas fa-undo"></i> Restore
+                        </div>
+                        <div class="dropdown-item delete" data-id="2">
+                            <i class="fas fa-trash"></i> Delete Permanently
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="trash-row" data-id="3">
+                <div class="trash-icon">
+                    <div class="checkbox-container">
+                        <div class="checkbox"></div>
+                    </div>
+                    <div class="file-icon doc">
+                        <i class="fas fa-file-word"></i>
+                    </div>
+                    <span>Expired_Items.docx</span>
+                </div>
+                <div>7/10/2025 4:55 PM</div>
+                <div>21KB</div>
+                <div>Word File</div>
+                <div>6/17/2025 4:11 PM</div>
+                <div class="dots">
+                    <i class="fas fa-ellipsis-v"></i>
+                    <div class="dropdown-menu">
+                        <div class="dropdown-item restore" data-id="3">
+                            <i class="fas fa-undo"></i> Restore
+                        </div>
+                        <div class="dropdown-item delete" data-id="3">
+                            <i class="fas fa-trash"></i> Delete Permanently
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- EMPTY STATE (Hidden by default) -->
+        <div class="table-container empty-state" id="empty-state" style="display: none;">
+            <i class="fas fa-trash"></i>
+            <h3>Trash is Empty</h3>
+            <p>Items you delete will appear here</p>
+        </div>
+
+    </div>
+</div>
+
+<!-- MODAL FOR CONFIRMATION -->
+<div class="modal" id="confirm-modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modal-title">Confirm Action</h3>
+            <button class="close-modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p id="modal-message">Are you sure you want to perform this action?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-outline" id="modal-cancel">Cancel</button>
+            <button class="btn btn-danger" id="modal-confirm">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Elements
+        const checkboxes = document.querySelectorAll('.checkbox');
+        const trashRows = document.querySelectorAll('.trash-row');
+        const dots = document.querySelectorAll('.dots');
+        const dropdowns = document.querySelectorAll('.dropdown-menu');
+        const searchInput = document.getElementById('search-input');
+        const selectAllBtn = document.getElementById('select-all');
+        const restoreBtn = document.getElementById('restore-selected');
+        const deleteBtn = document.getElementById('delete-selected');
+        const emptyBtn = document.getElementById('empty-trash');
+        const modal = document.getElementById('confirm-modal');
+        const modalCancel = document.getElementById('modal-cancel');
+        const modalConfirm = document.getElementById('modal-confirm');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMessage = document.getElementById('modal-message');
+        const tableContainer = document.getElementById('table-container');
+        const emptyState = document.getElementById('empty-state');
+        
+        let currentAction = null;
+        let selectedItems = [];
+        
+        // Toggle checkbox
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.classList.toggle('checked');
+                const row = this.closest('.trash-row');
+                row.classList.toggle('selected');
+                
+                updateSelectedItems();
+            });
+        });
+        
+        // Toggle dropdown menu
+        dots.forEach(dot => {
+            dot.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const dropdown = this.querySelector('.dropdown-menu');
+                
+                // Close all other dropdowns
+                dropdowns.forEach(d => {
+                    if (d !== dropdown) d.classList.remove('show');
+                });
+                
+                dropdown.classList.toggle('show');
+            });
+        });
+        
+        // Close dropdowns when clicking elsewhere
+        document.addEventListener('click', function() {
+            dropdowns.forEach(dropdown => {
+                dropdown.classList.remove('show');
+            });
+        });
+        
+        // Dropdown actions
+        document.querySelectorAll('.dropdown-item.restore').forEach(item => {
+            item.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                showModal('Restore Item', `Are you sure you want to restore this item?`, () => {
+                    restoreItem(id);
+                });
+            });
+        });
+        
+        document.querySelectorAll('.dropdown-item.delete').forEach(item => {
+            item.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                showModal('Delete Permanently', `Are you sure you want to permanently delete this item? This action cannot be undone.`, () => {
+                    deleteItem(id);
+                });
+            });
+        });
+        
+        // Select All button
+        selectAllBtn.addEventListener('click', function() {
+            const allChecked = Array.from(checkboxes).every(cb => cb.classList.contains('checked'));
+            
+            checkboxes.forEach(checkbox => {
+                if (allChecked) {
+                    checkbox.classList.remove('checked');
+                    checkbox.closest('.trash-row').classList.remove('selected');
+                } else {
+                    checkbox.classList.add('checked');
+                    checkbox.closest('.trash-row').classList.add('selected');
+                }
+            });
+            
+            updateSelectedItems();
+        });
+        
+        // Restore Selected button
+        restoreBtn.addEventListener('click', function() {
+            if (selectedItems.length === 0) {
+                alert('Please select at least one item to restore.');
+                return;
+            }
+            
+            showModal('Restore Selected Items', `Are you sure you want to restore ${selectedItems.length} item(s)?`, () => {
+                selectedItems.forEach(id => {
+                    restoreItem(id);
+                });
+            });
+        });
+        
+        // Delete Selected button
+        deleteBtn.addEventListener('click', function() {
+            if (selectedItems.length === 0) {
+                alert('Please select at least one item to delete.');
+                return;
+            }
+            
+            showModal('Delete Selected Items', `Are you sure you want to permanently delete ${selectedItems.length} item(s)? This action cannot be undone.`, () => {
+                selectedItems.forEach(id => {
+                    deleteItem(id);
+                });
+            });
+        });
+        
+        // Empty Trash button
+        emptyBtn.addEventListener('click', function() {
+            if (trashRows.length === 0) {
+                alert('Trash is already empty.');
+                return;
+            }
+            
+            showModal('Empty Trash', 'Are you sure you want to empty the trash? All items will be permanently deleted. This action cannot be undone.', () => {
+                trashRows.forEach(row => {
+                    row.remove();
+                });
+                checkEmptyState();
+            });
+        });
+        
+        // Search functionality
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            trashRows.forEach(row => {
+                const fileName = row.querySelector('.trash-icon span').textContent.toLowerCase();
+                if (fileName.includes(searchTerm)) {
+                    row.style.display = 'grid';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+        
+        // Modal functions
+        function showModal(title, message, confirmCallback) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            currentAction = confirmCallback;
+            modal.classList.add('show');
+        }
+        
+        modalCancel.addEventListener('click', function() {
+            modal.classList.remove('show');
+        });
+        
+        modalConfirm.addEventListener('click', function() {
+            if (currentAction) {
+                currentAction();
+            }
+            modal.classList.remove('show');
+        });
+        
+        // Close modal when clicking outside
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.classList.remove('show');
+            }
+        });
+        
+        // Utility functions
+        function updateSelectedItems() {
+            selectedItems = [];
+            document.querySelectorAll('.checkbox.checked').forEach(checkbox => {
+                const row = checkbox.closest('.trash-row');
+                selectedItems.push(row.getAttribute('data-id'));
+            });
+            
+            // Update button states based on selection
+            if (selectedItems.length > 0) {
+                restoreBtn.disabled = false;
+                deleteBtn.disabled = false;
+            } else {
+                restoreBtn.disabled = true;
+                deleteBtn.disabled = true;
+            }
+        }
+        
+        function restoreItem(id) {
+            const row = document.querySelector(`.trash-row[data-id="${id}"]`);
+            row.remove();
+            checkEmptyState();
+            // In a real app, you would also update the backend here
+        }
+        
+        function deleteItem(id) {
+            const row = document.querySelector(`.trash-row[data-id="${id}"]`);
+            row.remove();
+            checkEmptyState();
+            // In a real app, you would also update the backend here
+        }
+        
+        function checkEmptyState() {
+            const remainingRows = document.querySelectorAll('.trash-row');
+            if (remainingRows.length === 0) {
+                tableContainer.style.display = 'none';
+                emptyState.style.display = 'block';
+            } else {
+                tableContainer.style.display = 'block';
+                emptyState.style.display = 'none';
+            }
+        }
+        
+        // Initialize
+        updateSelectedItems();
+    });
+</script>
+
+</body>
+</html>
+

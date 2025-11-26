@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicare - Medical Stock Management System</title>
+    <link rel="stylesheet" href="static/css/welcome_page.css">
+    <link rel="stylesheet" href="static/css/header_design.css">
+    <link rel="icon" type="image/png" href="static/images/favicon.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+ {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div id="popup" class="popup {{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+    <!-- Header -->
+        <header>
+        <div class="header-container">
+            <div class="logo-container">
+                <div class="logo"><img src="static/images/Logo.png" alt="Logo"></div>
+                <div class="logo-text">Medical Stock Management System</div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/Welcome Page">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#officials">Officials</a></li>
+                    <li><a href="#contact">Contact Us</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons">
+                <a style="text-decoration: none; color:#ff8a7a" href="/Login Form"><button class="btn btn-login">Login</button></a>
+                <a style="text-decoration: none; color: white" href="/Account Register"><button class="btn btn-register">Register</button></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Welcome to <span style="color:#ff8a7a">Medicare!</span></h1>
+            <p>The Medical Stock Management System of the Rural Health Unit of Barangay Sta. Clara Sur, Pila, Laguna.</p>
+            <p>We make managing medical supplies easier and more reliable for our Rural Health Unit.
+                 With the help of RFID technology and smart alerts, we keep track of medicines in real time, 
+                 so our shelves stay stocked and our community always gets the care it deserves.</p>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="container">
+            <h2 class="section-title">About Us</h2>
+            <div class="about-content">
+                <div class="about-image">
+                    <img src="static/images/AboutUs Pic.jpg" alt="Medical supplies">
+                </div>
+                <div class="about-text">
+                    <h3>Our Commitment to Healthcare</h3>
+                    <p>Medicare is dedicated to providing efficient medical stock management solutions for the Rural Health Unit of Barangay Sta. Clara Sur, Pila, Laguna. Our system ensures that medical supplies are properly tracked, managed, and distributed to serve the community effectively.</p>
+                    <p>With our advanced tracking system, we minimize waste, prevent stockouts, and ensure that essential medicines are always available when needed.</p>
+                    
+                    <div class="mission-vision">
+                        <div class="mission">
+                            <h4>Our Mission</h4>
+                            <p>To provide an efficient and reliable medical stock management system that ensures the availability of essential medicines and supplies for the community's healthcare needs.</p>
+                        </div>
+                        <div class="vision">
+                            <h4>Our Vision</h4>
+                            <p>To become the leading medical stock management solution for rural health units, improving healthcare delivery through effective inventory management.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Officials Section -->
+    <section class="officials" id="officials">
+        <div class="container">
+            <h2 class="section-title">Our Officials</h2>
+            <div class="officials-grid">
+                <div class="official-card">
+                    <div class="official-image">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <div class="official-info">
+                        <h3>Dr. Maria Santos</h3>
+                        <p>Health Officer</p>
+                    </div>
+                </div>
+                <div class="official-card">
+                    <div class="official-image">
+                        <i class="fas fa-user-nurse"></i>
+                    </div>
+                    <div class="official-info">
+                        <h3>Nurse Juan Dela Cruz</h3>
+                        <p>Head Nurse</p>
+                    </div>
+                </div>
+                <div class="official-card">
+                    <div class="official-image">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="official-info">
+                        <h3>Dr. Viel Angelo Bambo</h3>
+                        <p>Administrator</p>
+                    </div>
+                </div>
+                <div class="official-card">
+                    <div class="official-image">
+                        <i class="fas fa-user-cog"></i>
+                    </div>
+                    <div class="official-info">
+                        <h3>Ms. Elena Reyes</h3>
+                        <p>Staff</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <h2 class="section-title">Contact Us</h2>
+            <div class="contact-container">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Location</h4>
+                            <p>Sta. Clara Sur, Pila, Laguna</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Phone</h4>
+                            <p>(0)50 500 0000 / 00 0000 x 0000</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Email</h4>
+                            <p>rlust@barangaymal.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Office Hours</h4>
+                            <p>Monday to Friday, 7:00 AM - 5:00 PM</p>
+                        </div>
+                    </div>
+                </div>
+                
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">Medicare</div>
+            <div class="footer-links">
+                <a href="#home">Home</a>
+                <a href="#about">About</a>
+                <a href="#officials">Officials</a>
+                <a href="#contact">Contact</a>
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+            </div>
+            <div class="copyright">
+                &copy; 2025 Medicare - Medical Stock Management System. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simple form submission handler
+        document.querySelector('.contact-form form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for your message! We will get back to you soon.');
+            this.reset();
+        });
+
+    </script>
+
+<script>
+    // fade-in on scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("show");
+            }
+        });
+    }, { threshold: 0.2 });
+
+    document.querySelectorAll('.about-content, .official-card, .contact-container')
+        .forEach(el => {
+            el.classList.add("hidden");
+            observer.observe(el);
+        });
+</script>
+
+<style>
+.hidden { opacity: 0; transform: translateY(40px); transition: all .8s ease-out; }
+.show { opacity: 1; transform: translateY(0); }
+</style>
+
+</body>
+</html>
+
