@@ -160,21 +160,25 @@ body {
 .contact {
     padding: 80px 20px;
     background-color: var(--white);
+
 }
 .contact-container {
     grid-template-columns: 1fr 1fr;
     gap: 50px;
-    translate: 470px;
+    translate: 450px 10px;
+
 }
 .contact-info {
     display: flex;
     flex-direction: column;
     gap: 20px;
+
 }
 .contact-item {
     display: flex;
     align-items: flex-start;
     gap: 15px;
+
 }
 .contact-icon {
     width: 50px;
@@ -186,7 +190,7 @@ body {
     justify-content: center;
     color: var(--primary-color);
     font-size: 20px;
-    flex-shrink: 0;
+    flex-shrink: 0; 
 }
 .contact-details h4 {
     margin-bottom: 5px;

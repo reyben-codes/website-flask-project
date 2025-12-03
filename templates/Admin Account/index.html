@@ -89,12 +89,12 @@
         <div class="medicine-categories">
           <h3>Medicine Categories</h3>
           <div class="categories-grid">
-            <div class="cat-box">💊 Essential Medication<br><span>342 items</span></div>
-            <div class="cat-box">🧤 Personal Protection<br><span>287 items</span></div>
-            <div class="cat-box">🩹 First Aid Tool<br><span>156 items</span></div>
-            <div class="cat-box">🧴 Wound Care Items<br><span>198 items</span></div>
-            <div class="cat-box">🔬 Diagnostic Tools<br><span>423 items</span></div>
-            <div class="cat-box">📦 Others<br><span>89 items</span></div>
+            <div class="cat-box">💊 Essential Medication<br><span>{{ essential }} items</span></div>
+            <div class="cat-box">🧤 Personal Protection<br><span>{{ protection }} items</span></div>
+            <div class="cat-box">🩹 First Aid Tool<br><span>{{ firstaid }} items</span></div>
+            <div class="cat-box">🧴 Wound Care Items<br><span>{{ woundcare }} items</span></div>
+            <div class="cat-box">🔬 Diagnostic Tools<br><span>{{ diagnostic }} items</span></div>
+            <div class="cat-box">📦 Others<br><span>{{ others }} items</span></div>
           </div>
         </div>
 
@@ -111,44 +111,55 @@
     </main>
   </div>
 
-  <script>
-    const ctx = document.getElementById('stockChart');
-    new Chart(ctx, {
-      type: 'pie',
-      data: {
-        labels: [
-          'Essential Medication',
-          'Personal Protection',
-          'First Aid Tool',
-          'Wound Care Items',
-          'Diagnostic Tools',
-          'Others'
+
+<script>
+  const essential = {{ essential|tojson }};
+  const protection = {{ protection|tojson }};
+  const firstaid = {{ firstaid|tojson }};
+  const woundcare = {{ woundcare|tojson }};
+  const diagnostic = {{ diagnostic|tojson }};
+  const others = {{ others|tojson }};
+
+  const ctx = document.getElementById('stockChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: [
+        'Essential Medication',
+        'Personal Protection',
+        'First Aid Tool',
+        'Wound Care Items',
+        'Diagnostic Tools',
+        'Others'
+      ],
+      datasets: [{
+        data: [essential, protection, firstaid, woundcare, diagnostic, others],
+        backgroundColor: [
+          '#4CAF50',
+          '#8BC34A',
+          '#FFC107',
+          '#FF5722',
+          '#2196F3',
+          '#9E9E9E'
         ],
-        datasets: [{
-          data: [342, 287, 156, 198, 423, 89],
-          backgroundColor: [
-            '#4CAF50',
-            '#8BC34A',
-            '#FFC107',
-            '#FF5722',
-            '#2196F3',
-            '#9E9E9E'
-          ],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        plugins: {
-          legend: {
-            position: 'right',
-            labels: {
-              boxWidth: 15,
-              color: '#333'
-            }
+        borderWidth: 1
+      }]
+    },
+    options: {
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: {
+            boxWidth: 15,
+            color: '#333'
           }
         }
       }
-    });
-  </script>
+    }
+  });
+</script>
+
+
+
 </body>
 </html>

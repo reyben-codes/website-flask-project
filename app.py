@@ -1,17 +1,21 @@
 from flask import Flask, render_template, request, redirect, session, url_for, flash, jsonify
 from flask_mail import Mail, Message
+from flask_cors import CORS
 import mysql.connector
 import random
 import string
 
 app = Flask(__name__)
 app.secret_key = 'secret_hehe'
+CORS(app)
+
+#------------------------------------ FOR WEB ---------------------------------------------#
 
 # ---------------------- Flask-Mail Config ----------------------
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # your email provider
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'reybendelmundo2005@gmail.com'  # replace with your sending email
+app.config['MAIL_USERNAME'] = 'reybendelmundo2005@gmail.com'  # sending email
 app.config['MAIL_PASSWORD'] = 'qrts tlxb hzzo zmqg'      # use Gmail App Password
 mail = Mail(app)
 
@@ -53,14 +57,48 @@ def login_form():
     # Otherwise, show login page
     return render_template('Login Form/index.html')
 
+@app.route('/Test Page')
+def test_page():
+    return render_template('Inventory/test.html')
 
 @app.route('/Admin Account')
 def admin_account():
     if not session.get('user') or session.get('accrole') != 'Admin':
         flash('Please log in first.', 'danger')
         return redirect('/')
-    return render_template('Admin Account/index.html')
 
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT COUNT(*) FROM medicine WHERE EssentialMeds IS NOT NULL AND EssentialMeds != ''")
+    essential = cursor.fetchone()[0] or 0
+
+    cursor.execute("SELECT COUNT(*) FROM medicine WHERE PersonalProt IS NOT NULL AND PersonalProt != ''")
+    protection = cursor.fetchone()[0] or 0
+
+    cursor.execute("SELECT COUNT(*) FROM medicine WHERE FirstAidTool IS NOT NULL AND FirstAidTool != ''")
+    firstaid = cursor.fetchone()[0] or 0
+
+    cursor.execute("SELECT COUNT(*) FROM medicine WHERE WoundCare IS NOT NULL AND WoundCare != ''")
+    woundcare = cursor.fetchone()[0] or 0
+
+    cursor.execute("SELECT COUNT(*) FROM medicine WHERE DiagnosticTool IS NOT NULL AND DiagnosticTool != ''")
+    diagnostic = cursor.fetchone()[0] or 0
+
+    cursor.execute("SELECT COUNT(*) FROM medicine WHERE OthersMed IS NOT NULL AND OthersMed != ''")
+    others = cursor.fetchone()[0] or 0
+
+    conn.close()
+
+    return render_template(
+        'Admin Account/index.html',
+        essential=essential,
+        protection=protection,
+        firstaid=firstaid,
+        woundcare=woundcare,
+        diagnostic=diagnostic,
+        others=others
+        )
 
 @app.route('/Staff Account')
 def staff_account():
@@ -361,6 +399,40 @@ def add_header(response):
     response.headers['Expires'] = '0'
     return response
 
+#------------------------------------ END OF WEB CODES ---------------------------------------------#
+
+
+
+
+#--------------------------------------- FOR MOBILE -------------------------------------------------#
+
+@app.route('/api/register', methods=['POST'])
+def api_register():
+    data = request.json
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("SELECT * FROM registeredaccs WHERE email = %s", (email,))
+    existing = cursor.fetchone()
+
+    if existing:
+        conn.close()
+        return jsonify({"status": "error", "message": "Email already exists"}), 400
+
+    cursor.execute(
+        "INSERT INTO registeredaccs (username, email, accountpassword, accrole) VALUES (%s, %s, %s, %s)",
+        (username, email, password, "Staff")
+    )
+    conn.commit()
+    conn.close()
+
+    return jsonify({"status": "success", "message": "Account created"})
+
+#------------------------------------ END OF MOBILE CODES ---------------------------------------------#
 
 #----------------------RUN APP----------------------#
 if __name__ == "__main__":

@@ -12,74 +12,108 @@ body {
 }
 
 .sidebar {
-  width: 260px;
-  background: #d9534f;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  padding: 20px 0;
-  height: 100vh;
-  position: fixed;
+    width: 260px;
+    background: #d9534f;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 1000;
+}
+
+.sidebar.collapsed {
+    transform: translateX(-260px);
 }
 
 .sidebar-header {
-  text-align: center;
-  margin-bottom: 20px;
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 .sidebar-header h2 {
-  margin: 10px 0 0 0;
-  font-size: 20px;
-  font-weight: 700;
+    margin: 10px 0 0 0;
+    font-size: 20px;
+    font-weight: 700;
 }
 
 .sidebar-header p {
-  font-size: 12px;
-  margin-top: 2px;
+    font-size: 12px;
+    margin-top: 2px;
+    opacity: 0.9;
 }
 
 nav ul {
-  list-style: none;
-  padding: 0;
-  margin-top: 20px;
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
 }
 
 nav ul li {
-  margin: 10px 0;
+    margin: 10px 0;
 }
 
 nav ul li a {
-  color: white;
-  text-decoration: none;
-  padding: 12px 20px;
-  display: block;
-  border-radius: 8px;
-  font-size: 15px;
+    color: white;
+    text-decoration: none;
+    padding: 12px 20px;
+    display: block;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: all 0.3s ease;
 }
 
 nav ul li a:hover,
 nav ul li.active a {
-  background: #c3423e;
+    background: #c3423e;
 }
 
 .sidebar-footer {
-  margin-top: auto;
-  text-align: center;
-  padding: 20px;
+    margin-top: auto;
+    text-align: center;
+    padding: 20px;
 }
 
 .sidebar-footer button {
-  background: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
+    background: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.sidebar-footer button:hover {
+    background: #f8f9fa;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 .sidebar-footer button a {
-  text-decoration: none;
-  color: #d9534f;
+    text-decoration: none;
+    color: #d9534f;
+    display: block;
+}
+
+/* Sidebar overlay for mobile */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+}
+
+.sidebar-overlay.active {
+    display: block;
 }
 
 .main-content {
