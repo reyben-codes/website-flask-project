@@ -87,6 +87,7 @@ input:focus, select:focus {
   background: none;
   vertical-align: middle;
   margin-right: 6px;
+  margin-top: 10px;
 }
 
 .checkbox a {
@@ -130,39 +131,5 @@ input:focus, select:focus {
 
 .login-link a:hover {
   text-decoration: underline;
-}
-
-.popup {
-  position: fixed;
-  top: -100px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #4CAF50;
-  color: white;
-  padding: 12px 24px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 14px;
-  opacity: 0;
-  transition: all 0.6s ease-in-out;
-  z-index: 9999;
-}
-
-.popup.show {
-  top: 25px;
-  opacity: 1;
-}
-
-.popup.success {
-  background-color: #4CAF50;
-}
-
-.popup.danger {
-  background-color: #f44336;
-}
-
-.popup.info {
-  background-color: #2196F3;
 }
 

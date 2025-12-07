@@ -23,7 +23,8 @@ body {
 
 .login-card {
   background: #fff;
-  padding: 2.5rem 2rem;
+  padding: 50px 40px;
+  margin-bottom: 50px;
   border-radius: 15px;
   box-shadow: 0 -5px 55px rgba(0, 0, 0, 0.08);
   width: 380px;
@@ -93,10 +94,13 @@ input:focus, select:focus {
 
 .options {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.85rem;
-  margin-bottom: 1rem;
+  font-size: 14px;
+  margin-bottom: 10px;
+  translate: 180px;
+  padding: none;
+  margin-top: none;
+  cursor: pointer;
+
 }
 
 .options a {
@@ -104,16 +108,6 @@ input:focus, select:focus {
   text-decoration: none;
 }
 
-.checkme {
-  width: auto;
-  height: auto;
-  padding: 0;
-  margin-right: 5px;
-  box-shadow: none;
-  border: none;
-  background: none;
-  vertical-align: middle;
-} 
 
 .login-btn {
   background: #f28b82;
@@ -156,27 +150,20 @@ input:focus, select:focus {
   right: 0;
 }
 
-.google-btn {
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 0.6rem;
-  width: 100%;
+.g_id_signin {
+  padding: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
   transition: 0.3s;
+  border-radius: 10px;
 }
 
-.google-btn:hover {
-  background: #f7f7f7;
+.g_id_signin data-shape :hover {
+  background: #ffa5a5;
 }
 
-.google-btn img {
-  width: 20px;
-}
 
 .invite {
   margin-top: 1rem;
@@ -196,31 +183,3 @@ input:focus, select:focus {
   text-decoration: none;
   font-family: 'Nunito Sans', sans-serif;
 }
-
-.popup {
-  position: fixed;
-  top: -100px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #4CAF50;
-  color: white;
-  padding: 12px 24px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 14px;
-  opacity: 0;
-  transition: all 0.6s ease;
-  z-index: 9999;
-}
-
-/* When shown */
-.popup.show {
-  top: 30px;
-  opacity: 1;
-}
-
-/* Category colors */
-.popup.success { background-color: #4CAF50; } /* green */
-.popup.danger { background-color: #f44336; } /* red */
-.popup.info { background-color: #2196F3; } /* blue */

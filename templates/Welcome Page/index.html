@@ -6,8 +6,10 @@
     <title>Medicare - Medical Stock Management System</title>
     <link rel="stylesheet" href="static/css/welcome_page.css">
     <link rel="stylesheet" href="static/css/header_design.css">
+    <link rel="stylesheet" href="static/css/popup_style.css">
     <link rel="icon" type="image/png" href="static/images/favicon.ico">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 </head>
 <body>
 
@@ -201,10 +203,19 @@
             this.reset();
         });
 
-    </script>
+        //for popup
+        document.addEventListener("DOMContentLoaded", function() {
+            const popup = document.querySelector('.popup');
+            if (popup) {
+                popup.classList.add('show');
+                setTimeout(() => {
+                    popup.classList.remove('show');
+                    setTimeout(() => popup.remove(), 600);
+                }, 3000);
+            }
+        });
 
-<script>
-    // fade-in on scroll
+        // fade-in on scroll
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -218,7 +229,7 @@
             el.classList.add("hidden");
             observer.observe(el);
         });
-</script>
+    </script>
 
 <style>
 .hidden { opacity: 0; transform: translateY(40px); transition: all .8s ease-out; }

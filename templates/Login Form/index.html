@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/png" href="static/images/favicon.ico">
   <link rel="stylesheet" href="static/css/loginstyle.css">
+  <link rel="stylesheet" href="static/css/popup_style.css">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 
   <title>MediCare | Login Page</title>
   
@@ -25,13 +27,13 @@
     <div class="login-card">
       <img style="width: 50px" src="static/images/Logo.png" alt="Logo">
 
-      <h2>Welcome!</h2>
+      <h2>Welcome to MediCare!</h2>
       <p class="subtitle">Log in to your account</p>
 
       <form action="/login" method="POST">
-        <label>Email Address</label>
+        <label>Email Address or Username</label>
         <div class="input-group">
-          <input name="email" type="email" placeholder="Enter your email" required>
+          <input name="email" type="text" placeholder="Enter your email or username" required>
         </div>
 
         <label>Password</label>
@@ -41,7 +43,6 @@
         </div>
 
         <div class="options">
-          <label><input type="checkbox" class="checkme"> Remember me</label>
           <a href="#">Forgot password?</a>
         </div>
 
@@ -51,11 +52,20 @@
       <div class="divider">
         <span>Or continue with</span>
       </div>
-
-      <button class="google-btn">
-        <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google icon">
-        Google
-      </button>
+      
+            <div id="g_id_onload"
+                 data-client_id="326101110012-lltbebckrjnq771470r33ql9r0c8onej.apps.googleusercontent.com"
+                 data-callback="handleGoogleLogin"
+                 data-auto_prompt="false">
+            </div>
+            <div class="g_id_signin"
+                 data-type="standard"
+                 data-size="large"
+                 data-theme="outline"
+                 data-text="sign_in_with"
+                 data-shape="rectangular"
+                 data-logo_alignment="left">
+            </div>
 
       <p class="invite">Have an invite code? <a href="/Account Register">Click here</a></p>
 
@@ -77,16 +87,40 @@
     }
   }
 
-  document.addEventListener("DOMContentLoaded", function() {
-  const popup = document.querySelector('.popup');
-  if (popup) {
-    popup.classList.add('show'); // enter animation
-    setTimeout(() => {
-      popup.classList.remove('show'); // exit animation
-      setTimeout(() => popup.remove(), 600); // remove after exit
-    }, 3000); // visible for 3 seconds
-  }
-});
+    // Handle Google Login Callback
+        function handleGoogleLogin(response) {
+            // Send the ID token to your Flask backend for verification
+            fetch('/google-login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ token: response.credential })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    window.location.href = data.redirect; // Redirect to Admin/Staff account
+                } else {
+                    alert(data.message); // Show error message from backend
+                }
+            })
+            .catch(error => {
+                console.error('Error during Google login:', error);
+                alert('An error occurred during Google login. Please try again.');
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const popup = document.querySelector('.popup');
+            if (popup) {
+                popup.classList.add('show');
+                setTimeout(() => {
+                    popup.classList.remove('show');
+                    setTimeout(() => popup.remove(), 600);
+                }, 3000);
+            }
+        });
 
 </script>
 

@@ -12,12 +12,22 @@
 </head>
 
 <body>
-<div class="dashboard-container">
+<!-- DARK OVERLAY FOR FOCUS -->
+  <div id="overlay"></div>
 
-  <!-- Sidebar -->
-  <aside class="sidebar">
+  <!-- TOGGLE BUTTON - FIXED TOP LEFT -->
+  <div class="toggle-btn" id="toggleSidebar">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <div class="dashboard-container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
-        <img src="static/images/logo.png" alt="logo" class="logo">
+        <img src="static/images/logo.png" alt="logo" class="logo" />
         <h2>MediCare | Admin</h2>
         <p>Inventory System</p>
       </div>
@@ -26,16 +36,18 @@
         <ul>
           <li><a href="{{ url_for('admin_account') }}">Dashboard</a></li>
           <li class="active"><a href="{{ url_for('medicine_tab') }}">Medicine</a></li>
-          <li><a href="#">Notification</a></li>
+          <li><a href="/Notif Tab">Notification</a></li>
           <li><a href="#">Staff</a></li>
-          <li><a href="#">History</a></li>
+          <li><a href="/History Tab">History</a></li>
           <li><a href="/Trash Tab">Trash</a></li>
           <li><a href="{{ url_for('generate_invite') }}">Generate Invite Code</a></li>
         </ul>
       </nav>
 
       <div class="sidebar-footer">
-        <button onclick="return confirm('Are you sure you want to log out?')"><a href="/logout">Log out</a></button>
+        <button onclick="return confirm('Are you sure you want to log out?')">
+          <a href="/logout">Log out</a>
+        </button>
       </div>
     </aside>
 
@@ -43,7 +55,7 @@
   <main class="main-content">
 
     <header class="topbar">
-      <h1>Medicine Categories</h1>
+      <h1 style="margin-left: 60px;">Medicine Categories</h1>
       <div class="topbar-icons">
         <span>🔍 Search</span>
         <span>🔔</span>
@@ -52,7 +64,7 @@
     </header>
 
     <!-- ❗ NEW ADULT/KIDS LAYOUT (first picture style) -->
-    <section class="medicine-categories-two">
+    <section class="medicine-categories-two" style="margin-top: 20px;">
       
       <a href="{{ url_for('medicine_category', category='adults') }}" class="med-box">
         <img src='static/images/med_categ_adults.png' class="med-big">
@@ -74,5 +86,30 @@
 
   </main>
 </div>
+
+<script>
+  const toggleBtn = document.getElementById("toggleSidebar");
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("overlay");
+
+  // Sidebar ALWAYS starts closed
+  window.addEventListener("DOMContentLoaded", () => {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("show");
+    toggleBtn.classList.remove("active");
+  });
+
+  toggleBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("open");
+    toggleBtn.classList.toggle("active");
+    overlay.classList.toggle("show");
+  });
+
+  overlay.addEventListener("click", () => {
+    sidebar.classList.remove("open");
+    toggleBtn.classList.remove("active");
+    overlay.classList.remove("show");
+  });
+</script>
 </body>
 </html>

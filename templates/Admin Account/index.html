@@ -1,21 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>MediCare | Admin Dashboard</title>
-  <link rel="stylesheet" href="static/css/admin_dashboard.css">
-  <link rel="stylesheet" href="static/css/sidebar_design.css">
-  <link rel="icon" type="image/png" href="static/images/favicon.ico">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="static/css/admin_dashboard.css" />
+  <link rel="stylesheet" href="static/css/sidebar_design.css" />
+  <link rel="stylesheet" href="static/css/popup_style.css">
+  <link rel="icon" type="image/png" href="static/images/favicon.ico" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+
+  <!-- DARK OVERLAY FOR FOCUS -->
+  <div id="overlay"></div>
+
+  <!-- TOGGLE BUTTON - FIXED TOP LEFT -->
+  <div class="toggle-btn" id="toggleSidebar">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
   <div class="dashboard-container">
 
-    <aside class="sidebar">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
-        <img src="static/images/logo.png" alt="logo" class="logo">
+        <img src="static/images/logo.png" alt="logo" class="logo" />
         <h2>MediCare | Admin</h2>
         <p>Inventory System</p>
       </div>
@@ -33,13 +49,18 @@
       </nav>
 
       <div class="sidebar-footer">
-        <button onclick="return confirm('Are you sure you want to log out?')"><a href="/logout">Log out</a></button>
+        <button onclick="return confirm('Are you sure you want to log out?')">
+          <a href="/logout">Log out</a>
+        </button>
       </div>
     </aside>
 
+    <!-- MAIN CONTENT -->
     <main class="main-content">
       <header class="topbar">
-        <h1>Dashboard</h1>
+        <h1 style="font-size: 35px;
+        margin-left: 60px;">Admin Dashboard</h1>
+
         <div class="topbar-icons">
           <span>🔍 Search</span>
           <span>🔔</span>
@@ -47,10 +68,11 @@
         </div>
       </header>
 
+      <!-- PAGE CONTENT REMAINS EXACTLY THE SAME -->
       <section class="stats">
         <div class="card total">
           <h4>Total Medicines</h4>
-          <h2>2,847</h2>
+          <h2>{{ total_meds }}</h2>
           <p>↑12% from last month</p>
         </div>
         <div class="card low">
@@ -89,28 +111,47 @@
         <div class="medicine-categories">
           <h3>Medicine Categories</h3>
           <div class="categories-grid">
-            <div class="cat-box">💊 Essential Medication<br><span>{{ essential }} items</span></div>
-            <div class="cat-box">🧤 Personal Protection<br><span>{{ protection }} items</span></div>
-            <div class="cat-box">🩹 First Aid Tool<br><span>{{ firstaid }} items</span></div>
-            <div class="cat-box">🧴 Wound Care Items<br><span>{{ woundcare }} items</span></div>
-            <div class="cat-box">🔬 Diagnostic Tools<br><span>{{ diagnostic }} items</span></div>
-            <div class="cat-box">📦 Others<br><span>{{ others }} items</span></div>
+            <div class="cat-box">
+              💊 Essential Medication<br /><span>{{ essential }} items</span>
+            </div>
+            <div class="cat-box">
+              🧤 Personal Protection<br /><span>{{ protection }} items</span>
+            </div>
+            <div class="cat-box">
+              🩹 First Aid Tool<br /><span>{{ firstaid }} items</span>
+            </div>
+            <div class="cat-box">
+              🧴 Wound Care Items<br /><span>{{ woundcare }} items</span>
+            </div>
+            <div class="cat-box">
+              🔬 Diagnostic Tools<br /><span>{{ diagnostic }} items</span>
+            </div>
+            <div class="cat-box">
+              📦 Others<br /><span>{{ others }} items</span>
+            </div>
           </div>
         </div>
 
         <div class="orders-summary">
           <h3>Orders Summary</h3>
           <div class="orders-grid">
-            <div class="order-box green">✅ Completed Orders<br><span>127</span></div>
-            <div class="order-box yellow">🕓 Pending Orders<br><span>23</span></div>
-            <div class="order-box blue">🚚 Returned Items<br><span>15</span></div>
-            <div class="order-box red">❌ Cancelled Orders<br><span>7</span></div>
+            <div class="order-box green">
+              ✅ Completed Orders<br /><span>127</span>
+            </div>
+            <div class="order-box yellow">
+              🕓 Pending Orders<br /><span>23</span>
+            </div>
+            <div class="order-box blue">
+              🚚 Returned Items<br /><span>15</span>
+            </div>
+            <div class="order-box red">
+              ❌ Cancelled Orders<br /><span>7</span>
+            </div>
           </div>
         </div>
       </section>
     </main>
   </div>
-
 
 <script>
   const essential = {{ essential|tojson }};
@@ -120,46 +161,67 @@
   const diagnostic = {{ diagnostic|tojson }};
   const others = {{ others|tojson }};
 
-  const ctx = document.getElementById('stockChart').getContext('2d');
+  const ctx = document.getElementById("stockChart").getContext("2d");
   new Chart(ctx, {
-    type: 'pie',
+    type: "pie",
     data: {
       labels: [
-        'Essential Medication',
-        'Personal Protection',
-        'First Aid Tool',
-        'Wound Care Items',
-        'Diagnostic Tools',
-        'Others'
+        "Essential Medication",
+        "Personal Protection",
+        "First Aid Tool",
+        "Wound Care Items",
+        "Diagnostic Tools",
+        "Others",
       ],
-      datasets: [{
-        data: [essential, protection, firstaid, woundcare, diagnostic, others],
-        backgroundColor: [
-          '#4CAF50',
-          '#8BC34A',
-          '#FFC107',
-          '#FF5722',
-          '#2196F3',
-          '#9E9E9E'
-        ],
-        borderWidth: 1
-      }]
+      datasets: [
+        {
+          data: [essential, protection, firstaid, woundcare, diagnostic, others],
+
+          backgroundColor: [
+            "#4CAF50",
+            "#8BC34A",
+            "#FFC107",
+            "#FF5722",
+            "#2196F3",
+            "#9E9E9E",
+          ],
+
+          borderWidth: 1,
+        },
+      ],
     },
     options: {
       plugins: {
         legend: {
-          position: 'right',
-          labels: {
-            boxWidth: 15,
-            color: '#333'
-          }
-        }
-      }
-    }
+          position: "right",
+          labels: { boxWidth: 15, color: "#333" },
+        },
+      },
+    },
+  });
+
+  const toggleBtn = document.getElementById("toggleSidebar");
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("overlay");
+
+  // Sidebar ALWAYS starts closed
+  window.addEventListener("DOMContentLoaded", () => {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("show");
+    toggleBtn.classList.remove("active");
+  });
+
+  toggleBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("open");
+    toggleBtn.classList.toggle("active");
+    overlay.classList.toggle("show");
+  });
+
+  overlay.addEventListener("click", () => {
+    sidebar.classList.remove("open");
+    toggleBtn.classList.remove("active");
+    overlay.classList.remove("show");
   });
 </script>
-
-
-
 </body>
 </html>

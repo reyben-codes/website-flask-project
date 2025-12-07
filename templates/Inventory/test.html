@@ -25,7 +25,7 @@
             min-height: 100vh;
         }
 
-        /* SIDEBAR - Your exact design */
+        /* SIDEBAR - Overlay Style */
         .sidebar {
             width: 260px;
             background: #d9534f;
@@ -35,6 +35,15 @@
             padding: 20px 0;
             height: 100vh;
             position: fixed;
+            left: -260px;
+            top: 0;
+            transition: left 0.3s ease;
+            z-index: 1001;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar.active {
+            left: 0;
         }
 
         .sidebar-header {
@@ -62,7 +71,7 @@
         }
 
         nav ul li {
-            margin: 5px 0;
+            margin: 10px 0;
         }
 
         nav ul li a {
@@ -93,7 +102,6 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
-            width: 100%;
             transition: all 0.3s ease;
         }
 
@@ -109,11 +117,31 @@
             display: block;
         }
 
+        /* Sidebar overlay for darkening background */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
         /* MAIN CONTENT */
         .main-content {
             flex: 1;
             min-height: 100vh;
-            margin-left: 260px;
+            width: 100%;
+            transition: filter 0.3s ease;
         }
 
         /* Header */
@@ -124,7 +152,54 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            position: relative;
+            z-index: 999;
         }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Hamburger Menu Button - No transform to X */
+        .hamburger-menu {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 40px;
+            height: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-menu:hover {
+            transform: scale(1.05);
+        }
+
+        .hamburger-line {
+            width: 100%;
+            height: 3px;
+            background-color: #333;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        /* Remove the X transformation */
+        /* .hamburger-menu.active .hamburger-line:nth-child(1) {
+            transform: translateY(11px) rotate(45deg);
+        }
+
+        .hamburger-menu.active .hamburger-line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger-menu.active .hamburger-line:nth-child(3) {
+            transform: translateY(-11px) rotate(-45deg);
+        } */
 
         .header h1 {
             font-size: 24px;
@@ -132,16 +207,191 @@
             font-weight: 600;
         }
 
+        /* Search Bar Styles */
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-bar {
+            width: 0;
+            opacity: 0;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-bar.active {
+            width: 300px;
+            opacity: 1;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #DA6363;
+            box-shadow: 0 0 0 2px rgba(218, 99, 99, 0.1);
+        }
+
+        .search-close {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 5px;
+            display: none;
+        }
+
+        .search-bar.active .search-close {
+            display: block;
+        }
+
+        /* Top Icons with Profile Dropdown */
         .top-icons {
             display: flex;
             align-items: center;
             gap: 20px;
         }
 
-        .top-icons i {
+        .icon-wrapper {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .icon-wrapper i {
             font-size: 20px;
             color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .icon-wrapper:hover i {
+            color: #DA6363;
+        }
+
+        /* Notification Badge */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #DA6363;
+            color: white;
+            font-size: 10px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Profile Dropdown */
+        .profile-dropdown {
+            position: relative;
             cursor: pointer;
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .profile-info:hover {
+            background-color: #f5f5f5;
+        }
+
+        .profile-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .profile-arrow {
+            font-size: 12px;
+            color: #666;
+            transition: transform 0.3s ease;
+        }
+
+        .profile-dropdown.active .profile-arrow {
+            transform: rotate(180deg);
+        }
+
+        /* Dropdown Menu */
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            min-width: 200px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .profile-dropdown.active .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(5px);
+        }
+
+        .dropdown-header {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .dropdown-header h4 {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .dropdown-header p {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .dropdown-item {
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+            color: #DA6363;
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            text-align: center;
         }
 
         /* Content Area */
@@ -637,10 +887,6 @@
                 width: 220px;
             }
             
-            .main-content {
-                margin-left: 220px;
-            }
-            
             .category-card {
                 min-width: 150px;
             }
@@ -652,16 +898,6 @@
         }
 
         @media (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                position: relative;
-                height: auto;
-            }
-            
-            .main-content {
-                margin-left: 0;
-            }
-            
             .table-actions {
                 flex-direction: column;
                 align-items: flex-start;
@@ -670,6 +906,18 @@
             .btn {
                 width: 100%;
                 justify-content: center;
+            }
+            
+            .search-bar.active {
+                width: 200px;
+            }
+            
+            .profile-name {
+                display: none;
+            }
+            
+            .top-icons {
+                gap: 10px;
             }
         }
 
@@ -702,6 +950,14 @@
                 width: 100%;
                 justify-content: center;
             }
+            
+            .search-bar.active {
+                width: 150px;
+            }
+            
+            .header {
+                padding: 15px;
+            }
         }
 
         /* Scrollbar Styling */
@@ -724,40 +980,96 @@
     </style>
 </head>
 <body>
+    <!-- Sidebar Overlay for dark background -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>MediCare Staff Dashboard</h2>
+            <p>Inventory System</p>
+        </div>
+
+        <nav>
+            <ul>
+                <li class="active"><a href="#">Dashboard</a></li>
+                <li><a href="#">Inventory</a></li>
+                <li><a href="#">Message</a></li>
+                <li><a href="#">Notification</a></li>
+                <li><a href="#">Calendar</a></li>
+                <li><a href="#">History</a></li>
+                <li><a href="#">Trash</a></li>
+            </ul>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button><a href="/logout">Log out</a></button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
     <div class="container">
-        <!-- SIDEBAR - Your exact design -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h2>MediCare Staff Dashboard</h2>
-                <p>Inventory System</p>
-            </div>
-
-            <nav>
-                <ul>
-                    <li class="active"><a href="#">Dashboard</a></li>
-                    <li><a href="#">Inventory</a></li>
-                    <li><a href="#">Message</a></li>
-                    <li><a href="#">Notification</a></li>
-                    <li><a href="#">Calendar</a></li>
-                    <li><a href="#">History</a></li>
-                    <li><a href="#">Trash</a></li>
-                </ul>
-            </nav>
-
-            <div class="sidebar-footer">
-                <button><a href="/logout">Log out</a></button>
-            </div>
-        </aside>
-
-        <!-- MAIN CONTENT -->
-        <div class="main-content">
+        <div class="main-content" id="mainContent">
             <!-- Header -->
             <div class="header">
-                <h1>Medicine Inventory</h1>
+                <div class="header-left">
+                    <!-- Hamburger Menu Button - No transform to X -->
+                    <button class="hamburger-menu" id="hamburgerMenu">
+                        <span class="hamburger-line"></span>
+                        <span class="hamburger-line"></span>
+                        <span class="hamburger-line"></span>
+                    </button>
+                    <h1>Medicine Inventory</h1>
+                </div>
                 <div class="top-icons">
-                    <i class="fas fa-search" id="search-icon"></i>
-                    <i class="fas fa-bell"></i>
-                    <i class="fas fa-user-circle"></i>
+                    <!-- Search Container -->
+                    <div class="search-container">
+                        <div class="search-bar" id="searchBar">
+                            <input type="text" class="search-input" id="searchInput" placeholder="Search medicines...">
+                            <button class="search-close" id="searchClose">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="icon-wrapper" id="searchIcon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                    </div>
+                    
+                    <!-- Notification Icon -->
+                    <div class="icon-wrapper" id="notificationIcon">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    
+                    <!-- Profile Dropdown -->
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <div class="profile-info">
+                            <div class="profile-name">Sarah Johnson</div>
+                            <i class="fas fa-chevron-down profile-arrow"></i>
+                        </div>
+                        <div class="dropdown-menu">
+                            <div class="dropdown-header">
+                                <h4>Sarah Johnson</h4>
+                                <p>Admin</p>
+                            </div>
+                            <a href="#" class="dropdown-item">
+                                <i class="fas fa-user"></i>
+                                <span>My Profile</span>
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <i class="fas fa-cog"></i>
+                                <span>Settings</span>
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <i class="fas fa-question-circle"></i>
+                                <span>Help & Support</span>
+                            </a>
+                            <a href="#" class="dropdown-item">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Logout</span>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -958,522 +1270,710 @@
         </div>
     </div>
 
-    <script>
-        // Medicine data
-        const medicineData = {
-            essential: {
-                adults: [
-                    { id: 1, name: "Paracetamol 500mg", stock: 45, expiration: "2025-08-15", modified: "Aug 15, 2025", activity: "high", barcode: "RFID-12345678" },
-                    { id: 2, name: "Amoxicillin 250mg", stock: 32, expiration: "2024-11-30", modified: "Aug 10, 2025", activity: "low", barcode: "RFID-87654321" },
-                    { id: 3, name: "Ibuprofen 400mg", stock: 67, expiration: "2026-01-20", modified: "Aug 12, 2025", activity: "high", barcode: "RFID-13579246" },
-                    { id: 4, name: "Omeprazole 20mg", stock: 28, expiration: "2025-05-10", modified: "Aug 8, 2025", activity: "low", barcode: "RFID-24681357" },
-                    { id: 5, name: "Losartan 50mg", stock: 89, expiration: "2025-12-31", modified: "Aug 5, 2025", activity: "high", barcode: "RFID-35792468" }
-                ],
-                kids: [
-                    { id: 6, name: "Paracetamol Syrup", stock: 25, expiration: "2025-03-15", modified: "Aug 15, 2025", activity: "low", barcode: "RFID-11223344" },
-                    { id: 7, name: "Amoxicillin Syrup", stock: 18, expiration: "2024-09-30", modified: "Aug 10, 2025", activity: "low", barcode: "RFID-55667788" },
-                    { id: 8, name: "Ibuprofen Syrup", stock: 32, expiration: "2025-12-20", modified: "Aug 12, 2025", activity: "high", barcode: "RFID-99001122" }
-                ]
-            },
-            protection: [
-                { id: 9, name: "Surgical Masks (50pc)", stock: 200, expiration: "2027-12-31", modified: "Aug 1, 2025", activity: "high", barcode: "RFID-33445566" },
-                { id: 10, name: "N95 Respirators", stock: 35, expiration: "2026-08-15", modified: "Aug 3, 2025", activity: "low", barcode: "RFID-77889900" },
-                { id: 11, name: "Disposable Aprons", stock: 80, expiration: "2026-09-30", modified: "Aug 2, 2025", activity: "high", barcode: "RFID-44332211" }
-            ],
-            firstaid: [
-                { id: 12, name: "First Aid Kit", stock: 15, expiration: "2025-07-15", modified: "Aug 8, 2025", activity: "low", barcode: "RFID-66554433" },
-                { id: 13, name: "Digital Thermometer", stock: 22, expiration: "", modified: "Aug 6, 2025", activity: "low", barcode: "RFID-88776655" },
-                { id: 14, name: "Medical Scissors", stock: 40, expiration: "", modified: "Aug 7, 2025", activity: "high", barcode: "RFID-00998877" }
-            ],
-            wound: [
-                { id: 15, name: "Adhesive Bandages", stock: 25, expiration: "2026-04-15", modified: "Aug 9, 2025", activity: "low", barcode: "RFID-84739201" },
-                { id: 16, name: "Medical Gloves (Box)", stock: 150, expiration: "2025-12-31", modified: "Aug 4, 2025", activity: "high", barcode: "RFID-56283947" },
-                { id: 17, name: "Gauze Pads", stock: 75, expiration: "2022-06-30", modified: "Aug 11, 2025", activity: "expired", barcode: "RFID-71928364" }
-            ],
-            diagnostic: [
-                { id: 18, name: "Blood Pressure Monitor", stock: 8, expiration: "", modified: "Aug 13, 2025", activity: "low", barcode: "RFID-12398745" },
-                { id: 19, name: "Stethoscope", stock: 12, expiration: "", modified: "Aug 14, 2025", activity: "low", barcode: "RFID-45632178" },
-                { id: 20, name: "Pulse Oximeter", stock: 6, expiration: "2025-03-20", modified: "Aug 15, 2025", activity: "low", barcode: "RFID-78965412" }
-            ],
-            others: [
-                { id: 21, name: "Disinfectant Spray", stock: 30, expiration: "2026-05-15", modified: "Aug 9, 2025", activity: "high", barcode: "RFID-15935748" },
-                { id: 22, name: "Hand Sanitizer", stock: 45, expiration: "2025-11-30", modified: "Aug 7, 2025", activity: "high", barcode: "RFID-75315982" },
-                { id: 23, name: "Medical Waste Bags", stock: 20, expiration: "", modified: "Aug 14, 2025", activity: "low", barcode: "RFID-25814736" }
-            ]
-        };
+<script>
+// Medicine data
+const medicineData = {
+    essential: {
+        adults: [
+            { id: 1, name: "Paracetamol 500mg", stock: 45, expiration: "2025-08-15", modified: "Aug 15, 2025", activity: "high", barcode: "RFID-12345678" },
+            { id: 2, name: "Amoxicillin 250mg", stock: 32, expiration: "2024-11-30", modified: "Aug 10, 2025", activity: "low", barcode: "RFID-87654321" },
+            { id: 3, name: "Ibuprofen 400mg", stock: 67, expiration: "2026-01-20", modified: "Aug 12, 2025", activity: "high", barcode: "RFID-13579246" },
+            { id: 4, name: "Omeprazole 20mg", stock: 28, expiration: "2025-05-10", modified: "Aug 8, 2025", activity: "low", barcode: "RFID-24681357" },
+            { id: 5, name: "Losartan 50mg", stock: 89, expiration: "2025-12-31", modified: "Aug 5, 2025", activity: "high", barcode: "RFID-35792468" }
+        ],
+        kids: [
+            { id: 6, name: "Paracetamol Syrup", stock: 25, expiration: "2025-03-15", modified: "Aug 15, 2025", activity: "low", barcode: "RFID-11223344" },
+            { id: 7, name: "Amoxicillin Syrup", stock: 18, expiration: "2024-09-30", modified: "Aug 10, 2025", activity: "low", barcode: "RFID-55667788" },
+            { id: 8, name: "Ibuprofen Syrup", stock: 32, expiration: "2025-12-20", modified: "Aug 12, 2025", activity: "high", barcode: "RFID-99001122" }
+        ]
+    },
+    protection: [
+        { id: 9, name: "Surgical Masks (50pc)", stock: 200, expiration: "2027-12-31", modified: "Aug 1, 2025", activity: "high", barcode: "RFID-33445566" },
+        { id: 10, name: "N95 Respirators", stock: 35, expiration: "2026-08-15", modified: "Aug 3, 2025", activity: "low", barcode: "RFID-77889900" },
+        { id: 11, name: "Disposable Aprons", stock: 80, expiration: "2026-09-30", modified: "Aug 2, 2025", activity: "high", barcode: "RFID-44332211" }
+    ],
+    firstaid: [
+        { id: 12, name: "First Aid Kit", stock: 15, expiration: "2025-07-15", modified: "Aug 8, 2025", activity: "low", barcode: "RFID-66554433" },
+        { id: 13, name: "Digital Thermometer", stock: 22, expiration: "", modified: "Aug 6, 2025", activity: "low", barcode: "RFID-88776655" },
+        { id: 14, name: "Medical Scissors", stock: 40, expiration: "", modified: "Aug 7, 2025", activity: "high", barcode: "RFID-00998877" }
+    ],
+    wound: [
+        { id: 15, name: "Adhesive Bandages", stock: 25, expiration: "2026-04-15", modified: "Aug 9, 2025", activity: "low", barcode: "RFID-84739201" },
+        { id: 16, name: "Medical Gloves (Box)", stock: 150, expiration: "2025-12-31", modified: "Aug 4, 2025", activity: "high", barcode: "RFID-56283947" },
+        { id: 17, name: "Gauze Pads", stock: 75, expiration: "2022-06-30", modified: "Aug 11, 2025", activity: "expired", barcode: "RFID-71928364" }
+    ],
+    diagnostic: [
+        { id: 18, name: "Blood Pressure Monitor", stock: 8, expiration: "", modified: "Aug 13, 2025", activity: "low", barcode: "RFID-12398745" },
+        { id: 19, name: "Stethoscope", stock: 12, expiration: "", modified: "Aug 14, 2025", activity: "low", barcode: "RFID-45632178" },
+        { id: 20, name: "Pulse Oximeter", stock: 6, expiration: "2025-03-20", modified: "Aug 15, 2025", activity: "low", barcode: "RFID-78965412" }
+    ],
+    others: [
+        { id: 21, name: "Disinfectant Spray", stock: 30, expiration: "2026-05-15", modified: "Aug 9, 2025", activity: "high", barcode: "RFID-15935748" },
+        { id: 22, name: "Hand Sanitizer", stock: 45, expiration: "2025-11-30", modified: "Aug 7, 2025", activity: "high", barcode: "RFID-75315982" },
+        { id: 23, name: "Medical Waste Bags", stock: 20, expiration: "", modified: "Aug 14, 2025", activity: "low", barcode: "RFID-25814736" }
+    ]
+};
 
-        // State management
-        let currentCategory = 'essential';
-        let currentSubcategory = 'adults';
-        let currentRestockItem = null;
-        let currentRestockQuantity = 10;
+// State management
+let currentCategory = 'essential';
+let currentSubcategory = 'adults';
+let currentRestockItem = null;
+let currentRestockQuantity = 10;
+let isSidebarOpen = false;
+let searchTimeout = null;
+let profileDropdownOpen = false;
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            showCategory('essential');
-            updateExpirationDate();
-            
-            // Add event listeners to category cards
-            document.querySelectorAll('.category-card').forEach(card => {
-                card.addEventListener('click', function() {
-                    const category = this.getAttribute('data-category');
-                    showCategory(category);
-                });
-            });
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    showCategory('essential');
+    updateExpirationDate();
 
-            // Add event listeners to subcategory tabs
-            document.querySelectorAll('.subcategory-tab').forEach(button => {
-                button.addEventListener('click', function() {
-                    const subcategory = this.getAttribute('data-subcategory');
-                    showSubcategory(subcategory);
-                });
-            });
-
-            // Navigation menu
-            document.querySelectorAll('nav ul li').forEach(item => {
-                item.addEventListener('click', function() {
-                    document.querySelectorAll('nav ul li').forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
-                });
-            });
-
-            // Add input validation listeners
-            setupInputValidation();
+    // Add event listeners to category cards
+    document.querySelectorAll('.category-card').forEach(card => {
+        card.addEventListener('click', function() {
+            const category = this.getAttribute('data-category');
+            showCategory(category);
         });
+    });
 
-        // Setup input validation
-        function setupInputValidation() {
-            // Name field - letters only
-            const nameInput = document.getElementById('item-name');
-            nameInput.addEventListener('input', function(e) {
-                validateLettersOnly(e.target, 'name-error');
-            });
+    // Add event listeners to subcategory tabs
+    document.querySelectorAll('.subcategory-tab').forEach(button => {
+        button.addEventListener('click', function() {
+            const subcategory = this.getAttribute('data-subcategory');
+            showSubcategory(subcategory);
+        });
+    });
 
-            // Stock field - numbers only
-            const stockInput = document.getElementById('item-stock');
-            stockInput.addEventListener('input', function(e) {
-                validateNumbersOnly(e.target, 'stock-error');
-            });
+    // Navigation menu
+    document.querySelectorAll('nav ul li').forEach(item => {
+        item.addEventListener('click', function() {
+            document.querySelectorAll('nav ul li').forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
 
-            // Barcode field - letters and numbers only
-            const barcodeInput = document.getElementById('item-barcode');
-            barcodeInput.addEventListener('input', function(e) {
-                validateAlphanumeric(e.target, 'barcode-error');
-            });
+    // Add input validation listeners
+    setupInputValidation();
 
-            // Staff field - letters only
-            const staffInput = document.getElementById('item-staff');
-            staffInput.addEventListener('input', function(e) {
-                validateLettersOnly(e.target, 'staff-error');
-            });
+    // Setup hamburger menu
+    setupHamburgerMenu();
+
+    // Setup search functionality
+    setupSearch();
+
+    // Setup profile dropdown
+    setupProfileDropdown();
+
+    // Setup notification click
+    setupNotification();
+});
+
+// Setup hamburger menu
+function setupHamburgerMenu() {
+    const hamburgerMenu = document.getElementById('hamburgerMenu');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    // Toggle sidebar when clicking hamburger menu
+    hamburgerMenu.addEventListener('click', function(e) {
+        e.stopPropagation(); // Prevent the click from bubbling up to document
+        toggleSidebar();
+    });
+
+    // Close sidebar when clicking on overlay
+    sidebarOverlay.addEventListener('click', function() {
+        closeSidebar();
+    });
+
+    // Close sidebar when pressing ESC key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && isSidebarOpen) {
+            closeSidebar();
         }
+    });
+}
 
-        // Validation functions
-        function validateLettersOnly(input, errorId) {
-            const value = input.value;
-            const errorElement = document.getElementById(errorId);
-            
-            // Allow letters, spaces, and hyphens
-            const lettersOnly = /^[A-Za-z\s\-]*$/;
-            
-            if (!lettersOnly.test(value)) {
-                input.classList.add('error');
-                errorElement.style.display = 'block';
-                return false;
-            } else {
-                input.classList.remove('error');
-                errorElement.style.display = 'none';
-                return true;
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    if (isSidebarOpen) {
+        // Close sidebar
+        sidebar.classList.remove('active');
+        sidebarOverlay.classList.remove('active');
+    } else {
+        // Open sidebar
+        sidebar.classList.add('active');
+        sidebarOverlay.classList.add('active');
+    }
+    isSidebarOpen = !isSidebarOpen;
+}
+
+function closeSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    if (!isSidebarOpen) return;
+    sidebar.classList.remove('active');
+    sidebarOverlay.classList.remove('active');
+    isSidebarOpen = false;
+}
+
+// Setup search functionality
+function setupSearch() {
+    const searchIcon = document.getElementById('searchIcon');
+    const searchBar = document.getElementById('searchBar');
+    const searchInput = document.getElementById('searchInput');
+    const searchClose = document.getElementById('searchClose');
+
+    // Toggle search bar when clicking search icon
+    searchIcon.addEventListener('click', function() {
+        searchBar.classList.add('active');
+        searchInput.focus();
+    });
+
+    // Close search bar when clicking close button
+    searchClose.addEventListener('click', function() {
+        closeSearch();
+    });
+
+    // Close search when clicking outside
+    document.addEventListener('click', function(event) {
+        const isClickInsideSearch = searchBar.contains(event.target) || searchIcon.contains(event.target);
+        if (!isClickInsideSearch && searchBar.classList.contains('active')) {
+            closeSearch();
+        }
+    });
+
+    // Close search with ESC key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && searchBar.classList.contains('active')) {
+            closeSearch();
+        }
+    });
+
+    // Search functionality with debounce
+    searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            performSearch(searchInput.value);
+        }, 300);
+    });
+}
+
+function closeSearch() {
+    const searchBar = document.getElementById('searchBar');
+    const searchInput = document.getElementById('searchInput');
+    searchBar.classList.remove('active');
+    searchInput.value = '';
+    // Clear search results and show all items
+    loadMedicineData(currentCategory, currentSubcategory);
+}
+
+function performSearch(query) {
+    if (!query.trim()) {
+        loadMedicineData(currentCategory, currentSubcategory);
+        return;
+    }
+
+    // Get all items based on current category
+    let allItems = [];
+    if (currentCategory === 'essential') {
+        allItems = [...medicineData.essential.adults, ...medicineData.essential.kids];
+    } else {
+        allItems = medicineData[currentCategory] || [];
+    }
+
+    // Filter items based on search query
+    const filteredItems = allItems.filter(item =>
+        item.name.toLowerCase().includes(query.toLowerCase()) ||
+        item.barcode.toLowerCase().includes(query.toLowerCase())
+    );
+
+    // Display filtered items
+    displayMedicineItems(filteredItems);
+}
+
+// Setup profile dropdown
+function setupProfileDropdown() {
+    const profileDropdown = document.getElementById('profileDropdown');
+    profileDropdown.addEventListener('click', function(event) {
+        event.stopPropagation();
+        profileDropdown.classList.toggle('active');
+        profileDropdownOpen = !profileDropdownOpen;
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!profileDropdown.contains(event.target) && profileDropdownOpen) {
+            profileDropdown.classList.remove('active');
+            profileDropdownOpen = false;
+        }
+    });
+
+    // Close dropdown with ESC key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && profileDropdownOpen) {
+            profileDropdown.classList.remove('active');
+            profileDropdownOpen = false;
+        }
+    });
+
+    // Handle dropdown item clicks
+    document.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            const action = this.querySelector('span').textContent;
+            handleProfileAction(action);
+            profileDropdown.classList.remove('active');
+            profileDropdownOpen = false;
+        });
+    });
+}
+
+function handleProfileAction(action) {
+    switch(action) {
+        case 'My Profile':
+            alert('Opening Profile Settings...');
+            break;
+        case 'Settings':
+            alert('Opening Settings...');
+            break;
+        case 'Help & Support':
+            alert('Opening Help & Support...');
+            break;
+        case 'Logout':
+            if (confirm('Are you sure you want to logout?')) {
+                alert('Logging out...');
+                // In a real app, you would redirect to logout page
+                // window.location.href = '/logout';
             }
+            break;
+    }
+}
+
+// Setup notification
+function setupNotification() {
+    const notificationIcon = document.getElementById('notificationIcon');
+    notificationIcon.addEventListener('click', function() {
+        alert('You have 3 new notifications');
+        // In a real app, you would show a notification dropdown
+    });
+}
+
+// Setup input validation
+function setupInputValidation() {
+    // Name field - letters only
+    const nameInput = document.getElementById('item-name');
+    nameInput.addEventListener('input', function(e) {
+        validateLettersOnly(e.target, 'name-error');
+    });
+
+    // Stock field - numbers only
+    const stockInput = document.getElementById('item-stock');
+    stockInput.addEventListener('input', function(e) {
+        validateNumbersOnly(e.target, 'stock-error');
+    });
+
+    // Barcode field - letters and numbers only
+    const barcodeInput = document.getElementById('item-barcode');
+    barcodeInput.addEventListener('input', function(e) {
+        validateAlphanumeric(e.target, 'barcode-error');
+    });
+
+    // Staff field - letters only
+    const staffInput = document.getElementById('item-staff');
+    staffInput.addEventListener('input', function(e) {
+        validateLettersOnly(e.target, 'staff-error');
+    });
+}
+
+// Validation functions
+function validateLettersOnly(input, errorId) {
+    const value = input.value;
+    const errorElement = document.getElementById(errorId);
+    // Allow letters, spaces, and hyphens, and match zero or more occurrences
+    const lettersOnly = /^[A-Za-z\s-]*$/;
+    if (!lettersOnly.test(value)) {
+        input.classList.add('error');
+        errorElement.style.display = 'block';
+        return false;
+    } else {
+        input.classList.remove('error');
+        errorElement.style.display = 'none';
+        return true;
+    }
+}
+
+function validateNumbersOnly(input, errorId) {
+    const value = input.value;
+    const errorElement = document.getElementById(errorId);
+    // Allow numbers only, and match zero or more occurrences
+    const numbersOnly = /^[0-9]*$/;
+    if (value && !numbersOnly.test(value)) {
+        input.classList.add('error');
+        errorElement.style.display = 'block';
+        return false;
+    } else {
+        input.classList.remove('error');
+        errorElement.style.display = 'none';
+        return true;
+    }
+}
+
+function validateAlphanumeric(input, errorId) {
+    const value = input.value;
+    const errorElement = document.getElementById(errorId);
+    // Allow letters, numbers, and hyphens, and match zero or more occurrences
+    const alphanumeric = /^[A-Za-z0-9-]*$/;
+    if (!alphanumeric.test(value)) {
+        input.classList.add('error');
+        errorElement.style.display = 'block';
+        return false;
+    } else {
+        input.classList.remove('error');
+        errorElement.style.display = 'none';
+        return true;
+    }
+}
+
+function validateForm() {
+    let isValid = true;
+
+    // Validate name
+    const nameInput = document.getElementById('item-name');
+    if (!validateLettersOnly(nameInput, 'name-error')) {
+        isValid = false;
+    }
+
+    // Validate stock (optional)
+    const stockInput = document.getElementById('item-stock');
+    if (stockInput.value && !validateNumbersOnly(stockInput, 'stock-error')) {
+        isValid = false;
+    }
+
+    // Validate barcode
+    const barcodeInput = document.getElementById('item-barcode');
+    if (!validateAlphanumeric(barcodeInput, 'barcode-error')) {
+        isValid = false;
+    }
+
+    // Validate staff name
+    const staffInput = document.getElementById('item-staff');
+    if (!validateLettersOnly(staffInput, 'staff-error')) {
+        isValid = false;
+    }
+
+    // Validate expiration date
+    const expirationInput = document.getElementById('item-expiration');
+    const expirationError = document.getElementById('expiration-error');
+    if (!expirationInput.value) {
+        expirationInput.classList.add('error');
+        expirationError.style.display = 'block';
+        isValid = false;
+    } else {
+        expirationInput.classList.remove('error');
+        expirationError.style.display = 'none';
+    }
+
+    // Validate category
+    const categoryInput = document.getElementById('item-category');
+    const categoryError = document.createElement('div');
+    categoryError.className = 'error-message';
+    categoryError.textContent = 'Please select a category';
+    // Remove existing error if any
+    const existingError = categoryInput.parentElement.querySelector('.error-message');
+    if (existingError) {
+        existingError.remove();
+    }
+    if (!categoryInput.value) {
+        categoryInput.classList.add('error');
+        categoryInput.parentElement.appendChild(categoryError);
+        categoryError.style.display = 'block';
+        isValid = false;
+    } else {
+        categoryInput.classList.remove('error');
+    }
+
+    return isValid;
+}
+
+// Show category
+function showCategory(category) {
+    currentCategory = category;
+
+    // Update active category card
+    document.querySelectorAll('.category-card').forEach(card => {
+        card.classList.remove('active');
+    });
+    document.querySelector(`.category-card[data-category="${category}"]`).classList.add('active');
+
+    // Show/hide subcategory tabs for essential medicine
+    if (category === 'essential') {
+        document.getElementById('subcategory-tabs').style.display = 'flex';
+        loadMedicineData(category, currentSubcategory);
+    } else {
+        document.getElementById('subcategory-tabs').style.display = 'none';
+        loadMedicineData(category);
+    }
+}
+
+// Show subcategory
+function showSubcategory(subcategory) {
+    currentSubcategory = subcategory;
+
+    // Update active tab
+    document.querySelectorAll('.subcategory-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    document.querySelector(`.subcategory-tab[data-subcategory="${subcategory}"]`).classList.add('active');
+
+    // Load data
+    loadMedicineData(currentCategory, subcategory);
+}
+
+// Load medicine data
+function loadMedicineData(category, subcategory = null) {
+    let items = [];
+    if (category === 'essential' && subcategory) {
+        items = medicineData[category][subcategory] || [];
+    } else {
+        items = medicineData[category] || [];
+    }
+    displayMedicineItems(items);
+}
+
+// Display medicine items in table
+function displayMedicineItems(items) {
+    const medicineTableBody = document.getElementById('medicine-table-body');
+    medicineTableBody.innerHTML = '';
+
+    items.forEach((item, index) => {
+        const row = document.createElement('div');
+        row.className = 'table-row';
+
+        // Determine status class and text
+        let statusClass = 'status-high';
+        let statusText = 'High Stock';
+        if (item.activity === 'low') {
+            statusClass = 'status-low';
+            statusText = 'Low Stock';
+        } else if (item.activity === 'processing') {
+            statusClass = 'status-processing';
+            statusText = 'Processing';
+        } else if (item.activity === 'expired') {
+            statusClass = 'status-expired';
+            statusText = 'Expired';
         }
 
-        function validateNumbersOnly(input, errorId) {
-            const value = input.value;
-            const errorElement = document.getElementById(errorId);
-            
-            // Allow numbers only
-            const numbersOnly = /^[0-9]*$/;
-            
-            if (value && !numbersOnly.test(value)) {
-                input.classList.add('error');
-                errorElement.style.display = 'block';
-                return false;
-            } else {
-                input.classList.remove('error');
-                errorElement.style.display = 'none';
-                return true;
-            }
-        }
+        // CREATE THE TABLE ROW WITH 8 COLUMNS
+        row.innerHTML = `
+            <div style="font-weight: 500;">${item.name}</div>
+            <div>${item.stock} pcs</div>
+            <div>${item.expiration || '-'}</div>
+            <div>${item.modified}</div>
+            <div>
+                <span class="status-badge ${statusClass}">${statusText}</span>
+            </div>
+            <div class="barcode">${item.barcode}</div>
+            <!-- 7th COLUMN: ACTIONS (Edit and Archive buttons) -->
+            <div class="table-action-buttons">
+                <button class="action-btn btn-edit" onclick="editItem('${item.name}')" title="Edit">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="action-btn btn-archive" onclick="archiveItem('${item.name}')" title="Archive">
+                    <i class="fas fa-archive"></i>
+                </button>
+            </div>
+            <!-- 8th COLUMN: RESTOCK BUTTON - Simple text button -->
+            <div>
+                <button class="restock-btn" onclick="showRestockModal('${item.name}')">
+                    Restock
+                </button>
+            </div>
+        `;
+        medicineTableBody.appendChild(row);
+    });
 
-        function validateAlphanumeric(input, errorId) {
-            const value = input.value;
-            const errorElement = document.getElementById(errorId);
-            
-            // Allow letters, numbers, and hyphens
-            const alphanumeric = /^[A-Za-z0-9\-]*$/;
-            
-            if (!alphanumeric.test(value)) {
-                input.classList.add('error');
-                errorElement.style.display = 'block';
-                return false;
-            } else {
-                input.classList.remove('error');
-                errorElement.style.display = 'none';
-                return true;
-            }
-        }
+    // Add "no data" message if empty
+    if (items.length === 0) {
+        const row = document.createElement('div');
+        row.className = 'table-row';
+        row.innerHTML = `
+            <div colspan="8" style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #666;">
+                <i class="fas fa-box-open fa-2x" style="margin-bottom: 10px; opacity: 0.5;"></i>
+                <p>No medicine items found in this category</p>
+            </div>
+        `;
+        medicineTableBody.appendChild(row);
+    }
+}
 
-        function validateForm() {
-            let isValid = true;
-            
-            // Validate name
-            const nameInput = document.getElementById('item-name');
-            if (!validateLettersOnly(nameInput, 'name-error')) {
-                isValid = false;
-            }
-            
-            // Validate stock (optional)
-            const stockInput = document.getElementById('item-stock');
-            if (stockInput.value && !validateNumbersOnly(stockInput, 'stock-error')) {
-                isValid = false;
-            }
-            
-            // Validate barcode
-            const barcodeInput = document.getElementById('item-barcode');
-            if (!validateAlphanumeric(barcodeInput, 'barcode-error')) {
-                isValid = false;
-            }
-            
-            // Validate staff name
-            const staffInput = document.getElementById('item-staff');
-            if (!validateLettersOnly(staffInput, 'staff-error')) {
-                isValid = false;
-            }
-            
-            // Validate expiration date
-            const expirationInput = document.getElementById('item-expiration');
-            const expirationError = document.getElementById('expiration-error');
-            if (!expirationInput.value) {
-                expirationInput.classList.add('error');
-                expirationError.style.display = 'block';
-                isValid = false;
-            } else {
-                expirationInput.classList.remove('error');
-                expirationError.style.display = 'none';
-            }
-            
-            // Validate category
-            const categoryInput = document.getElementById('item-category');
-            const categoryError = document.createElement('div');
-            categoryError.className = 'error-message';
-            categoryError.textContent = 'Please select a category';
-            
-            // Remove existing error if any
-            const existingError = categoryInput.parentElement.querySelector('.error-message');
-            if (existingError) {
-                existingError.remove();
-            }
-            
-            if (!categoryInput.value) {
-                categoryInput.classList.add('error');
-                categoryInput.parentElement.appendChild(categoryError);
-                categoryError.style.display = 'block';
-                isValid = false;
-            } else {
-                categoryInput.classList.remove('error');
-            }
-            
-            return isValid;
-        }
+// Update expiration date input
+function updateExpirationDate() {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 30);
+    const formattedDate = tomorrow.toISOString().split('T')[0];
+    document.getElementById('item-expiration').value = formattedDate;
+}
 
-        // Show category
-        function showCategory(category) {
-            currentCategory = category;
-            
-            // Update active category card
-            document.querySelectorAll('.category-card').forEach(card => {
-                card.classList.remove('active');
-            });
-            document.querySelector('.category-card[data-category="${category}"]').classList.add('active');
-            
-            // Show/hide subcategory tabs for essential medicine
-            if (category === 'essential') {
-                document.getElementById('subcategory-tabs').style.display = 'flex';
-                loadMedicineData(category, currentSubcategory);
-            } else {
-                document.getElementById('subcategory-tabs').style.display = 'none';
-                loadMedicineData(category);
-            }
-        }
+// Show List Items modal
+function showListItemsModal() {
+    document.getElementById('list-items-modal').style.display = 'flex';
+}
 
-        // Show subcategory
-        function showSubcategory(subcategory) {
-            currentSubcategory = subcategory;
-            
-            // Update active tab
-            document.querySelectorAll('.subcategory-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelector('.subcategory-tab[data-subcategory="${subcategory}"]').classList.add('active');
-            
-            // Load data
-            loadMedicineData(currentCategory, subcategory);
-        }
+// Show Restock modal
+function showRestockModal(itemName) {
+    // Find the item
+    let item = null;
+    if (currentCategory === 'essential') {
+        item = medicineData.essential.adults.find(i => i.name === itemName) || medicineData.essential.kids.find(i => i.name === itemName);
+    } else {
+        item = medicineData[currentCategory].find(i => i.name === itemName);
+    }
 
-        // Load medicine data
-        function loadMedicineData(category, subcategory = null) {
-            let items = [];
-            
-            if (category === 'essential' && subcategory) {
-                items = medicineData[category][subcategory] || [];
-            } else {
-                items = medicineData[category] || [];
-            }
-            
-            displayMedicineItems(items);
-        }
+    if (item) {
+        currentRestockItem = item;
+        currentRestockQuantity = 10; // Default restock quantity
+        document.getElementById('restock-item-info').innerHTML = `
+            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <h4 style="margin-bottom: 8px; color: #333;">${item.name}</h4>
+                <p style="margin: 5px 0; color: #666;">
+                    <strong>Current Stock:</strong> ${item.stock} pcs
+                </p>
+                <p style="margin: 5px 0; color: #666;">
+                    <strong>Barcode:</strong> ${item.barcode}
+                </p>
+            </div>
+        `;
+        document.getElementById('restock-quantity').textContent = currentRestockQuantity;
+        document.getElementById('restock-modal').style.display = 'flex';
+    }
+}
 
-        // Display medicine items in table
-        function displayMedicineItems(items) {
-            const medicineTableBody = document.getElementById('medicine-table-body');
-            medicineTableBody.innerHTML = '';
-            
-            items.forEach((item, index) => {
-                const row = document.createElement('div');
-                row.className = 'table-row';
-                
-                // Determine status class and text
-                let statusClass = 'status-high';
-                let statusText = 'High Stock';
-                
-                if (item.activity === 'low') {
-                    statusClass = 'status-low';
-                    statusText = 'Low Stock';
-                } else if (item.activity === 'processing') {
-                    statusClass = 'status-processing';
-                    statusText = 'Processing';
-                } else if (item.activity === 'expired') {
-                    statusClass = 'status-expired';
-                    statusText = 'Expired';
-                }
-                
-                // CREATE THE TABLE ROW WITH 8 COLUMNS
-                row.innerHTML = `
-                    <div style="font-weight: 500;">${item.name}</div>
-                    <div>${item.stock} pcs</div>
-                    <div>${item.expiration || '-'}</div>
-                    <div>${item.modified}</div>
-                    <div>
-                        <span class="status-badge ${statusClass}">${statusText}</span>
-                    </div>
-                    <div class="barcode">${item.barcode}</div>
-                    <!-- 7th COLUMN: ACTIONS (Edit and Archive buttons) -->
-                    <div class="table-action-buttons">
-                        <button class="action-btn btn-edit" onclick="editItem('${item.name}')" title="Edit">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="action-btn btn-archive" onclick="archiveItem('${item.name}')" title="Archive">
-                            <i class="fas fa-archive"></i>
-                        </button>
-                    </div>
-                    <!-- 8th COLUMN: RESTOCK BUTTON - Simple text button -->
-                    <div>
-                        <button class="restock-btn" onclick="showRestockModal('${item.name}')">
-                            Restock
-                        </button>
-                    </div>
-                `;
-                
-                medicineTableBody.appendChild(row);
-            });
-            
-            // Add "no data" message if empty
-            if (items.length === 0) {
-                const row = document.createElement('div');
-                row.className = 'table-row';
-                row.innerHTML = `
-                    <div colspan="8" style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #666;">
-                        <i class="fas fa-box-open fa-2x" style="margin-bottom: 10px; opacity: 0.5;"></i>
-                        <p>No medicine items found in this category</p>
-                    </div>
-                `;
-                medicineTableBody.appendChild(row);
-            }
-        }
+// Change quantity in restock modal
+function changeQuantity(delta) {
+    currentRestockQuantity = Math.max(0, currentRestockQuantity + delta);
+    document.getElementById('restock-quantity').textContent = currentRestockQuantity;
+}
 
-        // Update expiration date input
-        function updateExpirationDate() {
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 30);
-            const formattedDate = tomorrow.toISOString().split('T')[0];
-            document.getElementById('item-expiration').value = formattedDate;
-        }
+// Show Add New Item modal
+function showAddItemModal() {
+    // Reset form
+    document.getElementById('new-item-form').reset();
+    updateExpirationDate();
 
-        // Show List Items modal
-        function showListItemsModal() {
-            document.getElementById('list-items-modal').style.display = 'flex';
-        }
+    // Clear error states
+    document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+    document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
 
-        // Show Restock modal
-        function showRestockModal(itemName) {
-            // Find the item
-            let item = null;
-            
-            if (currentCategory === 'essential') {
-                item = medicineData.essential.adults.find(i => i.name === itemName) || 
-                       medicineData.essential.kids.find(i => i.name === itemName);
-            } else {
-                item = medicineData[currentCategory].find(i => i.name === itemName);
-            }
-            
-            if (item) {
-                currentRestockItem = item;
-                currentRestockQuantity = 10;
-                
-                document.getElementById('restock-item-info').innerHTML = `
-                    <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                        <h4 style="margin-bottom: 8px; color: #333;">${item.name}</h4>
-                        <p style="margin: 5px 0; color: #666;">
-                            <strong>Current Stock:</strong> ${item.stock} pcs
-                        </p>
-                        <p style="margin: 5px 0; color: #666;">
-                            <strong>Barcode:</strong> ${item.barcode}
-                        </p>
-                    </div>
-                `;
-                document.getElementById('restock-quantity').textContent = currentRestockQuantity;
-                document.getElementById('restock-modal').style.display = 'flex';
-            }
-        }
+    document.getElementById('add-item-modal').style.display = 'flex';
+}
 
-        // Change quantity in restock modal
-        function changeQuantity(delta) {
-            currentRestockQuantity = Math.max(0, currentRestockQuantity + delta);
-            document.getElementById('restock-quantity').textContent = currentRestockQuantity;
-        }
+// Edit item
+function editItem(itemName) {
+    alert(`Edit functionality for "${itemName}" would open here`);
+}
 
-        // Show Add New Item modal
-        function showAddItemModal() {
-            // Reset form
-            document.getElementById('new-item-form').reset();
-            updateExpirationDate();
-            
-            // Clear error states
-            document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
-            document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
-            
-            document.getElementById('add-item-modal').style.display = 'flex';
-        }
+// Archive item
+function archiveItem(itemName) {
+    if (confirm(`Are you sure you want to archive "${itemName}"?`)) {
+        alert(`"${itemName}" has been archived successfully`);
+        // In a real app, you would remove or mark the item as archived
+    }
+}
 
-        // Edit item
-        function editItem(itemName) {
-            alert('Edit functionality for "${itemName}" would open here');
-        }
+// Confirm restock
+function confirmRestock() {
+    if (currentRestockItem && currentRestockQuantity > 0) {
+        // Update the stock in the data
+        currentRestockItem.stock += currentRestockQuantity;
 
-        // Archive item
-        function archiveItem(itemName) {
-            if (confirm('Are you sure you want to archive ${itemName} ?')) {
-                alert('"${itemName}" has been archived successfully');
-                // In a real app, you would remove or mark the item as archived
-            }
-        }
+        // Update the date modified
+        const now = new Date();
+        currentRestockItem.modified = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
-        // Confirm restock
-        function confirmRestock() {
-            if (currentRestockItem && currentRestockQuantity > 0) {
-                // Update the stock in the data
-                currentRestockItem.stock += currentRestockQuantity;
-                
-                // Update the date modified
-                const now = new Date();
-                currentRestockItem.modified = now.toLocaleDateString('en-US', { 
-                    month: 'short', 
-                    day: 'numeric', 
-                    year: 'numeric' 
-                });
-                
-                // Update activity status
-                currentRestockItem.activity = currentRestockItem.stock < 30 ? 'low' : 'high';
-                
-                // Show success message
-                alert('Successfully restocked ${currentRestockQuantity} units of ${currentRestockItem.name}\nNew stock: ${currentRestockItem.stock} pcs');
-                
-                // Reload current category to show updated stock
-                loadMedicineData(currentCategory, currentSubcategory);
-                
-                // Close modal
-                closeModal('restock-modal');
-            } else if (currentRestockQuantity === 0) {
-                alert('Please set a restock quantity greater than 0');
-            }
-        }
+        // Update activity status
+        currentRestockItem.activity = currentRestockItem.stock < 30 ? 'low' : 'high';
 
-        // Save new item
-        function saveNewItem() {
-            // Validate form
-            if (!validateForm()) {
-                alert('Please fix the errors in the form before saving.');
-                return;
-            }
-            
-            // Get form values
-            const name = document.getElementById('item-name').value;
-            const category = document.getElementById('item-category').value;
-            const stock = document.getElementById('item-stock').value;
-            const expiration = document.getElementById('item-expiration').value;
-            const barcode = document.getElementById('item-barcode').value;
-            const staff = document.getElementById('item-staff').value;
-            
-            // Create new item
-            const newItem = {
-                id: Date.now(), // Generate unique ID
-                name: name,
-                stock: stock ? parseInt(stock) : 0,
-                expiration: expiration,
-                modified: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-                activity: stock && parseInt(stock) < 30 ? 'low' : 'high',
-                barcode: barcode
-            };
-            
-            // Add to appropriate category
-            if (category === 'essential') {
-                // Default to adults subcategory
-                if (!medicineData.essential.adults) {
-                    medicineData.essential.adults = [];
-                }
-                medicineData.essential.adults.push(newItem);
-            } else {
-                if (!medicineData[category]) {
-                    medicineData[category] = [];
-                }
-                medicineData[category].push(newItem);
-            }
-            
-            // Show success message
-            alert('${name} has been added successfully!');
-            
-            // Reload current category to show new item
-            loadMedicineData(currentCategory, currentSubcategory);
-            
-            // Close modal
-            closeModal('add-item-modal');
-        }
+        // Show success message
+        alert(`Successfully restocked ${currentRestockQuantity} units of ${currentRestockItem.name}\nNew stock: ${currentRestockItem.stock} pcs`);
 
-        // Print list
-        function printList() {
-            alert('Printing list...');
-        }
-
-        // Save list to dashboard
-        function saveListToDashboard() {
-            alert('List saved to dashboard');
-            closeModal('list-items-modal');
-        }
+        // Reload current category to show updated stock
+        loadMedicineData(currentCategory, currentSubcategory);
 
         // Close modal
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
+        closeModal('restock-modal');
+    } else if (currentRestockQuantity === 0) {
+        alert('Please set a restock quantity greater than 0');
+    }
+}
+
+// Save new item
+function saveNewItem() {
+    // Validate form
+    if (!validateForm()) {
+        alert('Please fix the errors in the form before saving.');
+        return;
+    }
+
+    // Get form values
+    const name = document.getElementById('item-name').value;
+    const category = document.getElementById('item-category').value;
+    const stock = document.getElementById('item-stock').value;
+    const expiration = document.getElementById('item-expiration').value;
+    const barcode = document.getElementById('item-barcode').value;
+    const staff = document.getElementById('item-staff').value;
+
+    // Create new item
+    const newItem = {
+        id: Date.now(), // Generate unique ID
+        name: name,
+        stock: stock ? parseInt(stock) : 0,
+        expiration: expiration,
+        modified: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        activity: stock && parseInt(stock) < 30 ? 'low' : 'high',
+        barcode: barcode
+    };
+
+    // Add to appropriate category
+    if (category === 'essential') {
+        // Default to adults subcategory
+        if (!medicineData.essential.adults) {
+            medicineData.essential.adults = [];
         }
+        medicineData.essential.adults.push(newItem);
+    } else {
+        if (!medicineData[category]) {
+            medicineData[category] = [];
+        }
+        medicineData[category].push(newItem);
+    }
+
+    // Show success message
+    alert(`${name} has been added successfully!`);
+
+    // Reload current category to show new item
+    loadMedicineData(currentCategory, currentSubcategory);
+
+    // Close modal
+    closeModal('add-item-modal');
+}
+
+// Print list
+function printList() {
+    alert('Printing list...');
+}
+
+// Save list to dashboard
+function saveListToDashboard() {
+    alert('List saved to dashboard');
+    closeModal('list-items-modal');
+}
+
+// Close modal
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+</script>
     </script>
 </body>
 </html>

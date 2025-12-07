@@ -11,11 +11,22 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+  <!-- DARK OVERLAY FOR FOCUS -->
+  <div id="overlay"></div>
+
+  <!-- TOGGLE BUTTON - FIXED TOP LEFT -->
+  <div class="toggle-btn" id="toggleSidebar">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
   <div class="dashboard-container">
-    <!-- Sidebar -->
-    <aside class="sidebar">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
-        <img src="static/images/logo.png" alt="logo" class="logo">
+        <img src="static/images/logo.png" alt="logo" class="logo" />
         <h2>MediCare | Admin</h2>
         <p>Inventory System</p>
       </div>
@@ -33,14 +44,16 @@
       </nav>
 
       <div class="sidebar-footer">
-        <button onclick="return confirm('Are you sure you want to log out?')"><a href="/logout">Log out</a></button>
+        <button onclick="return confirm('Are you sure you want to log out?')">
+          <a href="/logout">Log out</a>
+        </button>
       </div>
     </aside>
 
     <!-- Main -->
     <main class="main-content">
       <header class="topbar">
-        <h1>Medicine Categories</h1>
+        <h1 style="margin-left: 60px">Medicine Categories</h1>
         <div class="topbar-icons">
           <span>🔍 Search</span>
           <span>🔔</span>
@@ -48,7 +61,7 @@
         </div>
       </header>
 
-      <section class="medicine-grid">
+      <section class="medicine-grid" style="margin-top: 40px;">
         <a href="/Essential_Meds" class="medicine-card">
           <img class="medpics" src="static/images/med_essential.png" alt="Essential medication">
           <div class="med-info">
@@ -99,5 +112,30 @@
       </section>
     </main>
   </div>
+
+<script>
+const toggleBtn = document.getElementById("toggleSidebar");
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("overlay");
+
+  // Sidebar ALWAYS starts closed
+  window.addEventListener("DOMContentLoaded", () => {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("show");
+    toggleBtn.classList.remove("active");
+  });
+
+  toggleBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("open");
+    toggleBtn.classList.toggle("active");
+    overlay.classList.toggle("show");
+  });
+
+  overlay.addEventListener("click", () => {
+    sidebar.classList.remove("open");
+    toggleBtn.classList.remove("active");
+    overlay.classList.remove("show");
+  });
+</script>
 </body>
 </html>

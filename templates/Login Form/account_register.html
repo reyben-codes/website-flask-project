@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Account Register</title>
   <link rel="icon" type="image/png" href="static/images/favicon.ico">
+  <link rel="stylesheet" href="static/css/popup_style.css">
   <link rel="stylesheet" href="static/css/account_register_style.css">
   <style>
     /* OTP button style */
@@ -24,6 +25,7 @@
       cursor: pointer;
       border-radius: 6px;
       font-weight: bold;
+      transition: 0.2s;
     }
     .btn-otp:hover {
       background-color: #f09292;
@@ -33,9 +35,17 @@
 
 <body>
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div id="popup" class="popup {{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
   <div class="container">
     <img src="static/images/Logo.png" alt="Logo" class="logo">
-    <h1>Register</h1>
+    <h1>Register to MediCare</h1>
     <p class="subtitle">Create your Account</p>
 
     <form class="form" action="/register" method="POST">
@@ -43,13 +53,13 @@
       <input type="text" name="username" placeholder="Enter username" required>
 
       <label><a style="color: red; font-size: 16px"><b>*</b></a>First Name<a style="color: gray; font-size: 12px; padding: none; margin-left: 120px">Must be A-Z or a-z characters</a></label>
-      <input type="text" name="firstname" placeholder="Enter first name" pattern="[A-Z a-z]" required>
+      <input type="text" name="firstname" placeholder="Enter first name" pattern="^[A-Za-z ]+$" title="First Name must contain only letters (A-Z or a-z)" required>
 
       <label>Middle Name<a style="color: gray; font-size: 12px; padding: none; margin-left: 120px">Must be A-Z or a-z characters</a></label>
-      <input type="text" name="middlename" placeholder="Enter middle name" pattern="[A-Z a-z]">
+      <input type="text" name="middlename" placeholder="Enter middle name" pattern="^[A-Za-z ]+$" title="Middle Name must contain only letters (A-Z or a-z)">
 
       <label><a style="color: red; font-size: 16px"><b>*</b></a>Last Name <a style="color: gray; font-size: 12px; padding: none; margin-left: 120px">Must be A-Z or a-z characters</a></label>
-      <input type="text" name="lastname" placeholder="Enter last name" pattern="[A-Z a-z]" required>
+      <input type="text" name="lastname" placeholder="Enter last name" pattern="^[A-Za-z ]+$" title="Last Name must contain only letters (A-Z or a-z)" required>
 
       <label><a style="color: red; font-size: 16px"><b>*</b></a>Email Address</label>
       <input type="email" name="email" placeholder="Enter your email" required>
@@ -63,7 +73,14 @@
 
       <label><a style="color: red; font-size: 16px"><b>*</b></a>Password</label>
       <div class="password-group">
-        <input id="make-password" type="password" name="createpassword" placeholder="Create password" required>
+        <input minlength="8"
+        pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}"
+        title="Password must be at least 8 characters long and include:
+        - 1 uppercase letter,
+        - 1 lowercase letter,
+        - 1 number,
+        - 1 special character (@$!%*?&)"
+        placeholder="Enter strong password"id="make-password" type="password" name="createpassword" placeholder="Create password" required>
         <input id="confirm-password" type="password" name="accountpassword" placeholder="Confirm password" required>
         <img id="eye" style="width: 30px; cursor: pointer" src="static/images/eyeicon close.png">
       </div>
@@ -78,7 +95,7 @@
       <div class="row">
         <div>
           <label>Phone Number</label>
-          <input style="margin-top: 1px; padding-bottom: 12px;" type="text" name="phone" placeholder="Enter phone number">
+          <input style="margin-top: 1px; padding-bottom: 12px;" id="phonenum" maxlength=11  type="text" name="phone" placeholder="Enter phone number">
         </div>
         <div>
           <label><a style="margin-left: 17px; color: red; font-size: 12px"><b>*</b></a>Date of Birth</label>
@@ -101,7 +118,7 @@
       <p class="login-link">Do you have an account? <a href="/Login Form">Log in</a></p>
     </form>
   </div>
-
+ 
 <script>
   let eyeicon = document.getElementById("eye");
   let password = document.getElementById("make-password");
@@ -147,13 +164,32 @@
     .then(response => response.json())
     .then(data => {
       if(data.status === 'success'){
-        alert('✅ OTP sent! Check your email.');
+        alert('OTP sent Successfully✅! Check your email.');
       } else {
-        alert('❌ Error sending OTP: ' + data.message);
+        alert(' ❌Error sending OTP: ' + data.message);
       }
     })
-    .catch(err => alert('❌ Network error'));
+    .catch(err => alert('❌Network error'));
   }
+
+  //for phone number input to accept numbers only
+  document.getElementById('phonenum').addEventListener('keydown', function(event) {
+            const key = event.key;
+
+            // Allow numbers (0-9)
+            if (key >= '0' && key <= '9') {
+                return;
+            }
+
+            if (key === 'Backspace' || key === 'Delete' || key === 'Tab' || key === 'Escape' || key === 'Enter' ||
+                key === 'ArrowLeft' || key === 'ArrowRight' || key === 'Home' || key === 'End' ||
+                (event.metaKey && (key === 'a' || key === 'c' || key === 'v' || key === 'x')) || 
+                (event.ctrlKey && (key === 'a' || key === 'c' || key === 'v' || key === 'x'))) { 
+                return;
+            }
+
+            event.preventDefault();
+        });
 </script>
 
 </body>
